@@ -1,0 +1,186 @@
+
+import { rect, on } from "./aliases.js";
+import { Utils, radians, ndist, dist } from "./math.js";
+import { Node } from "./node.js";
+
+class Renderer {
+    /**
+     * @param {HTMLCanvasElement} canvas renderer element
+     * @param {Boolean} renderGrid should the grid render or not
+     * @param {Number} gridSpacing coordinate spacing between grid vertices
+     */
+    constructor(canvas, renderGrid = true, gridSpacing = 1) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d");
+
+        /**@type {Array<Node>} */
+        this.nodes = new Array();
+
+        this.renderGrid = renderGrid;
+        this.gridSpacing = gridSpacing;
+        this.gridColor = "white";
+        this.gridLineWidth = 0.5;
+
+        this.graphingColor = "blue";
+
+        this.needsRender = true;
+
+        this.centerX = 0;
+        this.centerY = 0;
+        this.left = 0;
+        this.right = 0;
+        this.top = 0;
+        this.bottom = 0;
+
+        this.zoom = 100;
+
+        this.drawRect = rect(this.canvas);
+        this.prevDrawRect = { width: 0, height: 0 };
+
+        this.cursor = { x: 0, y: 0, localx: 0, localy: 0, dragNode:undefined };
+
+        this.renderRequestCallback = () => {
+            this.render();
+        };
+
+        on(window, "resize", () => {
+            console.log("Resize");
+            this.needsRender = true;
+        });
+
+        requestAnimationFrame(this.renderRequestCallback);
+    }
+
+    /** Set the page-space (layerX/layerY) cursor position
+     * Triggers a render
+     * @param {Integer} x 
+     * @param {Integer} y
+     */
+    setCursor(x, y) {
+        this.cursor.x = x;
+        this.cursor.y = y;
+        this.cursor.localx = ((this.cursor.x - this.drawRect.width / 2) / this.zoom) + this.centerX;
+        this.cursor.localy = ((this.cursor.y - this.drawRect.height / 2) / this.zoom) + this.centerY;
+        this.needsRender = true;
+    }
+
+    /** Set the origin the viewer is viewing from
+     * Triggers a render
+     * @param {Integer} x
+     * @param {Integer} y 
+     */
+    setCenter(x, y) {
+        this.centerX = x;
+        this.centerY = y;
+        this.needsRender = true;
+    }
+
+    /** Move the origin the viewer is viewing from by some amounts
+     * @param {Integer} xa move amount x
+     * @param {Integer} ya move amount y
+     */
+    moveCenter(xa, ya) {
+        this.setCenter(this.centerX + xa, this.centerY + ya);
+    }
+    mouseDown () {
+        for (let node of this.nodes) {
+            if (node.pointInside(this.cursor.localx, this.cursor.localy)) {
+                this.cursor.dragNode = node;
+                return;
+            }
+        }
+    }
+    mouseUp () {
+        this.cursor.dragNode = undefined;
+    }
+    mouseDrag (xa, ya) {
+        if (this.cursor.dragNode) {
+            this.cursor.dragNode.x -= xa;
+            this.cursor.dragNode.y -= ya;
+        } else {
+            this.moveCenter(xa, ya);
+        }
+    }
+    render() {
+        requestAnimationFrame(this.renderRequestCallback);
+        if (!this.needsRender) return;
+        this.needsRender = false;
+
+        this.drawRect = rect(this.canvas);
+        if (this.prevDrawRect.width !== this.drawRect.width ||
+            this.prevDrawRect.height !== this.drawRect.height) {
+            this.prevDrawRect.width = this.drawRect.width;
+            this.prevDrawRect.height = this.drawRect.height;
+            this.canvas.width = this.drawRect.width;
+            this.canvas.height = this.drawRect.height;
+        }
+
+        this.left = (-this.drawRect.width / 2) / this.zoom;
+        this.right = (this.drawRect.width / 2) / this.zoom;
+        this.top = (-this.drawRect.height / 2) / this.zoom;
+        this.bottom = (this.drawRect.height / 2) / this.zoom;
+
+        this.ctx.save();
+        this.ctx.clearRect(0, 0, this.drawRect.width, this.drawRect.height);
+        this.ctx.translate(this.drawRect.width / 2, this.drawRect.height / 2);
+
+        this.ctx.scale(this.zoom, this.zoom);
+        this.ctx.lineWidth = this.gridLineWidth / this.zoom;
+        this.ctx.translate(-this.centerX, -this.centerY);
+
+        if (this.renderGrid) {
+            this.ctx.beginPath();
+            let xOffset = Utils.roundTo(this.left + this.centerX, this.gridSpacing);
+            for (let x = xOffset; x < this.right + this.centerX; x += this.gridSpacing) {
+                this.ctx.moveTo(x, this.top + this.centerY);
+                this.ctx.lineTo(x, this.bottom + this.centerY);
+            }
+            let yOffset = Utils.roundTo(this.top + this.centerY, this.gridSpacing);
+            for (let y = yOffset; y < this.bottom + this.centerY; y += this.gridSpacing) {
+                this.ctx.moveTo(this.left + this.centerX, y);
+                this.ctx.lineTo(this.right + this.centerX, y);
+            }
+            this.ctx.strokeStyle = this.gridColor;
+            this.ctx.stroke();
+
+            this.ctx.save();
+            this.ctx.rotate(radians(45));
+            this.ctx.beginPath();
+            this.ctx.rect(
+                -this.gridSpacing / 2,
+                -this.gridSpacing / 2,
+                this.gridSpacing,
+                this.gridSpacing
+            );
+            this.ctx.fillStyle = "#fff5";
+            this.ctx.closePath();
+            this.ctx.fill();
+            this.ctx.restore();
+        }
+
+        for (let node of this.nodes) {
+            this.ctx.save();
+            this.ctx.translate(node.x, node.y);
+            node.render();
+            this.ctx.restore();
+        }
+
+        this.ctx.restore();
+    }
+
+    /** Add some zoom to your room..
+     * Triggers a render
+     * @param {Number} za zoom amount
+     */
+    addZoom(za) {
+        this.zoom -= za;
+        if (this.zoom < 8) {
+            this.zoom = 8;
+        } else if (this.zoom > 400) {
+            this.zoom = 400;
+        }
+        this.needsRender = true;
+    }
+}
+
+export { Renderer };

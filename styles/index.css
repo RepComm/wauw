@@ -1,0 +1,41 @@
+body {
+    background-color: rgb(83, 83, 83);
+    margin: 0px;
+    padding: 0px;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+#canvas {
+    top: 0%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    border-radius:1em;
+    position: absolute;
+    background-color: black;
+    cursor:pointer;
+}
+
+#menu {
+    position:absolute;
+    top:82%;
+    height:16%;
+    left:10%;
+    width:80%;
+    text-align: center;
+}
+.menu-button {
+    margin: 0px;
+    margin-top: 0px;
+    color:#a6c9d7;
+    background-color:#131313;
+    border: none;
+    border-radius: 0.25em;
+    padding-left: 1%;
+    padding-right: 1%;
+    cursor: pointer;
+    padding-top: 0.25%;
+    padding-bottom: 0.25%;
+    margin-top: 1px;
+}
