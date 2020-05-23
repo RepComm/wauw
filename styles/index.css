@@ -5,11 +5,13 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    color:white;
+    font-family:'Courier New', Courier, monospace;
 }
 #canvas {
-    top: 0%;
-    left: 10%;
-    width: 80%;
+    top: 1%;
+    left: 1%;
+    width: 75%;
     height: 80%;
     border-radius:1em;
     position: absolute;
@@ -19,10 +21,10 @@ body {
 
 #menu {
     position:absolute;
-    top:82%;
-    height:16%;
-    left:10%;
-    width:80%;
+    top:84%;
+    height:14%;
+    left:1%;
+    width:75%;
     text-align: center;
 }
 .menu-button {
@@ -38,4 +40,32 @@ body {
     padding-top: 0.25%;
     padding-bottom: 0.25%;
     margin-top: 1px;
+}
+#config {
+    position:absolute;
+    right:1%;
+    width:22%;
+    top:1%;
+    height:98%;
+    background-color:#1c1c1c;
+    border-radius:1em;
+}
+
+.config-knob {
+    background-repeat:no-repeat;
+    background-size:auto 100%;
+    background-image:url("../textures/knob01.svg");
+    height: 3em;
+    width: 3em;
+    display:inline-block;
+    transform:rotate(0deg);
+    cursor:pointer;
+}
+.config-label {
+    color:inherit;
+    font-size:x-large;
+}
+
+.mediasource-config {
+  width:100%;
 }

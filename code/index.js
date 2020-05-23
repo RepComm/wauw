@@ -7,41 +7,74 @@ let canvas = get("canvas");
 /**@type {Renderer} */
 let renderer = new Renderer(canvas, true, 1);
 
+let config = get("config");
+
+/**@param {HTMLElement} e 
+ */
+function clearChildren(e) {
+  while (e.lastChild) {
+    e.lastChild.remove();
+  }
+}
+
 on(canvas, "wheel", (evt) => {
-    evt.preventDefault();
-    renderer.addZoom((evt.deltaY * renderer.zoom) / 50);
+  evt.preventDefault();
+  renderer.addZoom((evt.deltaY * renderer.zoom) / 50);
 });
 
 let mouse = {
-    left: false
+  left: false,
+  right: false
 };
 
-on(canvas, "mousedown", (evt) => {
-    mouse.left = true;
-    renderer.mouseDown();
-});
-on(canvas, "mouseup", (evt) => {
-    mouse.left = false;
-    renderer.mouseUp();
+on(window, "contextmenu", (evt) => {
+  evt.preventDefault();
+  let node = renderer.selectNode();
+  if (!evt.altKey) {
+    clearChildren(config);
+  }
+  if (node) {
+    if (node.meta.element) {
+      config.appendChild(node.meta.element);
+    }
+  }
 });
 
-on(canvas, "mousemove", (evt) => {
-    renderer.setCursor(evt.layerX, evt.layerY);
-    if (mouse.left) {
-        renderer.mouseDrag(-evt.movementX / renderer.zoom, -evt.movementY / renderer.zoom);
-    }
+on(window, "mousedown", (evt) => {
+  if (evt.target === canvas) {
+    if (evt.button === 0) mouse.left = true;
+    if (evt.button === 1) mouse.right = true;
+    renderer.mouseDown();
+  }
+});
+on(window, "mouseup", (evt) => {
+  if (evt.button === 0) mouse.left = false;
+  if (evt.button === 1) mouse.right = false;
+  renderer.mouseUp();
+});
+
+on(window, "mousemove", (evt) => {
+  renderer.setCursor(evt.layerX, evt.layerY);
+  if (mouse.left) {
+    //Added option for holding alt while dragging to move scene instead
+    renderer.mouseDrag(
+      -evt.movementX / renderer.zoom,
+      -evt.movementY / renderer.zoom,
+      evt.altKey
+    );
+  }
 });
 
 let audioCtx = new AudioContext();
 let drawCtx = renderer.ctx;
 
 let createNode = (type) => {
-    let node = new Node(drawCtx, audioCtx, type);
-    node.setPos(renderer.centerX, renderer.centerY);
+  let node = new Node(drawCtx, audioCtx, type);
+  node.setPos(renderer.centerX, renderer.centerY);
 
-    renderer.nodes.push(node);
+  renderer.nodes.push(node);
 
-    renderer.needsRender = true;
+  renderer.needsRender = true;
 }
 
 on(get("node-create-analyser"), "click", () => createNode("analyser"));

@@ -2,37 +2,39 @@
 <html>
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Web Audio Workstation</title>
-    <link rel="stylesheet" href="./styles/index.css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Web Audio Workstation</title>
+  <link rel="stylesheet" href="./styles/index.css" />
 </head>
 
 <body>
-    <canvas id="canvas">
+  <canvas id="canvas">
 
-    </canvas>
-    <div id="menu">
-        <button class="menu-button" id="node-create-analyser">analyser</button>
-        <button class="menu-button" id="node-create-biquadfilter">biquadfilter</button>
-        <button class="menu-button" id="node-create-constant">constant</button>
-        <button class="menu-button" id="node-create-convolver">convolver</button>
-        <button class="menu-button" id="node-create-delay">delay</button>
-        <button class="menu-button" id="node-create-dynamicscompressor">dynamicscompressor</button>
-        <button class="menu-button" id="node-create-gain">gain</button>
-        <button class="menu-button" id="node-create-iirfilter">iirfilter</button>
-        <button class="menu-button" id="node-create-mediaelementsource">mediaelementsource</button>
-        <button class="menu-button" id="node-create-mediastreamdestination">mediastreamdestination</button>
-        <button class="menu-button" id="node-create-mediastreamsource">mediastreamsource</button>
-        <button class="menu-button" id="node-create-mediastreamtracksource">mediastreamtracksource</button>
-        <button class="menu-button" id="node-create-oscillator">oscillator</button>
-        <button class="menu-button" id="node-create-panner">panner</button>
-        <button class="menu-button" id="node-create-periodicwave">periodicwave</button>
-        <button class="menu-button" id="node-create-scriptprocessor">scriptprocessor</button>
-        <button class="menu-button" id="node-create-stereopanner">stereopanner</button>
-        <button class="menu-button" id="node-create-waveshaper">waveshaper</button>
+  </canvas>
+  <div id="config">
+  </div>
+  <div id="menu">
+    <button class="menu-button" id="node-create-analyser">analyser</button>
+    <button class="menu-button" id="node-create-biquadfilter">biquadfilter</button>
+    <button class="menu-button" id="node-create-constant">constant</button>
+    <button class="menu-button" id="node-create-convolver">convolver</button>
+    <button class="menu-button" id="node-create-delay">delay</button>
+    <button class="menu-button" id="node-create-dynamicscompressor">dynamicscompressor</button>
+    <button class="menu-button" id="node-create-gain">gain</button>
+    <button class="menu-button" id="node-create-iirfilter">iirfilter</button>
+    <button class="menu-button" id="node-create-mediaelementsource">mediaelementsource</button>
+    <button class="menu-button" id="node-create-mediastreamdestination">mediastreamdestination</button>
+    <button class="menu-button" id="node-create-mediastreamsource">mediastreamsource</button>
+    <button class="menu-button" id="node-create-mediastreamtracksource">mediastreamtracksource</button>
+    <button class="menu-button" id="node-create-oscillator">oscillator</button>
+    <button class="menu-button" id="node-create-panner">panner</button>
+    <button class="menu-button" id="node-create-periodicwave">periodicwave</button>
+    <button class="menu-button" id="node-create-scriptprocessor">scriptprocessor</button>
+    <button class="menu-button" id="node-create-stereopanner">stereopanner</button>
+    <button class="menu-button" id="node-create-waveshaper">waveshaper</button>
 
-    </div>
-    <script type="module" src="./code/index.js"></script>
+  </div>
+  <script type="module" src="./code/index.js"></script>
 </body>
 
 </html>
