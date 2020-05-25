@@ -7,19 +7,9 @@ let canvas = get("canvas");
 /**@type {Renderer} */
 let renderer = new Renderer(canvas, true, 1);
 
-let config = get("config");
-
-/**@param {HTMLElement} e 
- */
-function clearChildren(e) {
-  while (e.lastChild) {
-    e.lastChild.remove();
-  }
-}
-
 on(canvas, "wheel", (evt) => {
   evt.preventDefault();
-  renderer.addZoom((evt.deltaY * renderer.zoom) / 50);
+  renderer.onEvent({type:"wheel", delta:evt.deltaY});
 });
 
 let mouse = {
@@ -29,24 +19,15 @@ let mouse = {
 
 on(window, "contextmenu", (evt) => {
   evt.preventDefault();
-  let node = renderer.selectNode();
-  if (evt.ctrlKey) {
-    if (renderer.lastSelectedNode) {
-      renderer.lastSelectedNode.connect(node);
-      renderer.lastSelectedNode = undefined;
-    } else {
-      renderer.lastSelectedNode = node;
-    }
-    return;
-  }
-  if (!evt.altKey) {
-    clearChildren(config);
-  }
-  if (node) {
-    if (node.meta.element) {
-      config.appendChild(node.meta.element);
-    }
-  }
+  let e = {
+    type:"select-node",
+    node:renderer.selectNode()
+  };
+  if (!e.node) e.type = "deselect-node";
+  
+  if (evt.ctrlKey) e.type = "add-select-node";
+
+  renderer.onEvent(e);
 });
 
 on(window, "mousedown", (evt) => {

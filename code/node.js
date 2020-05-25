@@ -1,5 +1,5 @@
 
-import { make } from "./aliases.js";
+import { make, on } from "./aliases.js";
 
 import { Utils } from "./math.js";
 
@@ -48,14 +48,28 @@ class Node {
     this.inputColor = "#ff00ff";
     this.type = type;
 
+    this.name = name;
+    if (!this.name) this.name = this.type;
+
     /**@type {Array<Node>}*/
     this.outputNodes = new Array();
 
-    //Extra data can be stored in meta
-    this.meta = {};
+    //HTML element for controls
+    /**@type {HTMLDivElement} Gets appended to .node-config-panel*/
+    this.element = make("div");
+    this.element.classList.add("node-config-panel");
 
-    this.name = name;
-    if (!this.name) this.name = this.type;
+    /**@type {HTMLSpanElement} Title span of the node*/
+    this.elementTitle = make("span");
+    this.elementTitle.classList.add("node-config-title", "node-controls-colors");
+    this.elementTitle.textContent = this.name;
+    this.element.appendChild(this.elementTitle);
+
+    /**@type {HTMLDivElement} Container for the controls for this node*/
+    this.elementControls = make("div");
+    this.elementControls.classList.add("node-config-controls");
+    this.element.appendChild(this.elementControls);
+
     this.drawCtx = drawCtx;
     this.x = 0;
     this.y = 0;
@@ -95,16 +109,30 @@ class Node {
         break;
       case "gain":
         this.node = audioCtx.createGain();
+        let gainSlider = make("input");
+        gainSlider.classList.add("node-config-slider", "node-controls-colors");
+        gainSlider.type = "range";
+        gainSlider.name = "Amount";
+        gainSlider.min = 0;
+        gainSlider.max = 1;
+        gainSlider.value = this.node.gain.value;
+        gainSlider.step = 0.05;
+        on(gainSlider, "change", (evt)=>{
+          this.node.gain.value = parseFloat(gainSlider.value);
+        });
+        this.elementControls.appendChild(gainSlider);
         break;
       case "iirfilter":
         throw "Not implemented";
         //this.node = audioCtx.createIIRFilter();
         break;
       case "mediaelementsource":
-        this.meta.element = make("audio");
-        this.meta.element.controls = true;
-        this.meta.element.classList.add("mediasource-config");
-        this.node = audioCtx.createMediaElementSource(this.meta.element);
+        let audioElement = make("audio");
+        audioElement.controls = true;
+        audioElement.classList.add("node-config-mediasource", "node-controls-colors");
+        this.elementControls.appendChild(audioElement);
+
+        this.node = audioCtx.createMediaElementSource(audioElement);
         break;
       case "mediastreamdestination":
         this.node = audioCtx.createMediaStreamDestination();

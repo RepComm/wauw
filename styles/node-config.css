@@ -1,0 +1,42 @@
+
+/**This css is responsible for the node-config displays and it's controls */
+
+.node-config-panel {
+  flex-direction: column;
+  display:flex;
+}
+
+.node-config-mediasource {
+  flex:1;
+}
+
+.node-config-title {
+	text-align: center;
+	font-size: 1.5em;
+	font-weight: bold;
+	font-variant-caps: all-small-caps;
+}
+
+.node-config-controls {
+  display:flex;
+  flex-direction:column;
+}
+
+.node-controls-colors {
+  background-color:rgb(56, 56, 56);
+  color:rgb(167, 167, 167);
+}
+
+.node-config-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  height:0.5em;
+  display:flex;
+}
+
+.node-config-slider::-moz-range-thumb,
+.node-config-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 50%;
+}

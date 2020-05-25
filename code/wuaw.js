@@ -1,5 +1,5 @@
 
-import { rect, on } from "./aliases.js";
+import { rect, on, clearChildren, get } from "./aliases.js";
 import { Utils, radians, ndist, dist } from "./math.js";
 import { Node } from "./node.js";
 
@@ -12,6 +12,9 @@ class Renderer {
   constructor(canvas, renderGrid = true, gridSpacing = 1) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
+
+    /**@type {HTMLDivElement} .node-config-panel*/
+    this.config = get("config");
 
     /**@type {Array<Node>} */
     this.nodes = new Array();
@@ -115,6 +118,40 @@ class Renderer {
       this.moveCenter(xa, ya);
     }
   }
+
+  populateConfig(node, clearExisting = true) {
+    if (clearExisting) clearChildren(this.config);
+    if (!node) return; //If no node specified just clear the contents of config menu
+
+    //Add the node's html config screen to the config menu
+    config.appendChild(node.element);
+  }
+
+  onEvent(evt) {
+    switch (evt.type) {
+      case "wheel":
+        this.addZoom((evt.delta * this.zoom) / 50);
+        break;
+      case "select-node":
+        this.lastSelectedNode = evt.node;
+        this.populateConfig(this.lastSelectedNode);
+        break;
+      case "deselect-node":
+        this.lastSelectedNode = undefined;
+        this.populateConfig(undefined, true);
+        break;
+      case "add-select-node": //Connect two nodes when we select them
+        if (this.lastSelectedNode) {
+          this.lastSelectedNode.connect(evt.node);
+          //Deselects the selected node
+          this.lastSelectedNode = undefined;
+        } else {
+          this.lastSelectedNode = evt.node;
+        }
+        break;
+    }
+  }
+
   render() {
     requestAnimationFrame(this.renderRequestCallback);
     if (!this.needsRender) return;

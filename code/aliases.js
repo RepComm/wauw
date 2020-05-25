@@ -14,4 +14,10 @@ let make = (type) => document.createElement(type);
  */
 let on = (elem, type, callback, options) => elem.addEventListener(type, callback, options);
 
-export { get, getByClass, rect, make, on };
+let clearChildren = (e)=>{
+  while(e.lastChild) {
+    e.lastChild.remove();
+  }
+}
+
+export { get, getByClass, rect, make, on, clearChildren };
