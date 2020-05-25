@@ -1,6 +1,8 @@
 
 import { make } from "./aliases.js";
 
+import { Utils } from "./math.js";
+
 /**Modified from https://stackoverflow.com/a/3368118
  * @param {CanvasRenderingContext2D} ctx
  * @param {Number} w
@@ -45,6 +47,9 @@ class Node {
     this.outputColor = "#00aaff";
     this.inputColor = "#ff00ff";
     this.type = type;
+
+    /**@type {Array<Node>}*/
+    this.outputNodes = new Array();
 
     //Extra data can be stored in meta
     this.meta = {};
@@ -130,18 +135,73 @@ class Node {
         /**@type {WaveShaperNode}*/
         this.node = audioCtx.createWaveShaper();
         break;
+      case "destination":
+        this.node = audioCtx.destination;
+        break;
       default:
         throw "Node type " + this.type + " is not handled!";
+    }
+    if (this.node.start) {
+      this.node.start();
     }
     this.node.element = this;
   }
 
-  setPos(x, y) {
-    this.x = x;
-    this.y = y;
+  isConnected(to) {
+    return this.outputNodes.includes(to);
+  }
+
+  /**Connect this to the input of another
+   * @param {Node} to
+   * @returns {boolean} true if successful
+   */
+  connect (to) {
+    console.log("Connect");
+    if (this.isConnected(to)) {
+      return false;
+    }
+    this.node.connect(to.node);
+    this.outputNodes.push(to);
+  }
+
+  /**Disconnect from another node
+   * @param {Node} to 
+   * @returns {boolean} successful
+   */
+  disconnect (to) {
+    let ind = this.outputNodes.indexOf(to);
+    if (ind === -1) return false;
+    this.node.disconnect(to.node);
+    this.outputNodes.splice(ind, 1);
+    return true;
+  }
+
+  hasOutput (i) {
+    return i < this.outputNodes.length && i >= 0;
+  }
+
+  moveBy(xa, ya, snap = 0) {
+    this.setPos(this.x + xa, this.y + ya, snap);
+  }
+
+  snapTo (snap=0.1) {
+    this.x = Utils.roundTo(this.x, snap);
+    this.y = Utils.roundTo(this.y, snap);
+  }
+
+  setPos(x, y, snap = 0) {
+    if (snap !== 0) {
+      this.x = Utils.roundTo(x, snap);
+      this.y = Utils.roundTo(y, snap);
+    } else {
+      this.x = x;
+      this.y = y;
+    }
   }
 
   pointInside(x, y) {
+    x += this.w / 2;
+    y += this.h / 2;
     return (
       x > this.x && x < this.x + this.w &&
       y > this.y && y < this.y + this.h
@@ -153,6 +213,8 @@ class Node {
    * @param {Node} node 
    */
   static render(ctx, node) {
+    ctx.save();
+    ctx.translate(-node.w / 2, -node.h / 2);
     //ctx.beginPath();
     roundRect(ctx, 0, 0, node.w, node.h, 0.1);
     //ctx.rect(0, 0, node.w, node.h);
@@ -173,6 +235,15 @@ class Node {
       let nh = outSize - padSize * 2;
       roundRect(ctx, nx, ny, nw, nh, 0.25 * nw);
       ctx.fill();
+
+      if (node.hasOutput(i)) {
+        ctx.beginPath();
+        ctx.moveTo(nx, ny);
+        let other = node.outputNodes[i];
+        ctx.lineTo(other.x - node.x, other.y - node.y);
+        ctx.closePath();
+        ctx.stroke();
+      }
     }
 
     let ins = node.node.numberOfOutputs;
@@ -193,6 +264,7 @@ class Node {
     ctx.fillStyle = "white";
     ctx.font = node.font;
     ctx.fillText(node.name, nodeTextPadding, node.fontSize * 1.25);
+    ctx.restore();
   }
 }
 

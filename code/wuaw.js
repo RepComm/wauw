@@ -39,6 +39,9 @@ class Renderer {
 
     this.cursor = { x: 0, y: 0, localx: 0, localy: 0, dragNode: undefined };
 
+    /**@type {Node}*/
+    this.lastSelectedNode = undefined;
+
     this.renderRequestCallback = () => {
       this.render();
     };
@@ -85,10 +88,10 @@ class Renderer {
   /**Tries to select a node under the cursor in order of visibility
    * @returns {Node}
    */
-  selectNode () {
+  selectNode() {
     //Reverse loop iteration to pick nodes that are rendered on top first
     let node;
-    for (let i=this.nodes.length-1; i>-1; i--) {
+    for (let i = this.nodes.length - 1; i > -1; i--) {
       node = this.nodes[i];
       if (node.pointInside(this.cursor.localx, this.cursor.localy)) {
         return node;
@@ -99,12 +102,15 @@ class Renderer {
     this.cursor.dragNode = this.selectNode();
   }
   mouseUp() {
-    this.cursor.dragNode = undefined;
+    if (this.cursor.dragNode) {
+      this.cursor.dragNode.snapTo(0.25);
+      this.cursor.dragNode = undefined;
+      this.needsRender = true;
+    }
   }
   mouseDrag(xa, ya, forceMoveCenter) {
     if (this.cursor.dragNode && !forceMoveCenter) {
-      this.cursor.dragNode.x -= xa;
-      this.cursor.dragNode.y -= ya;
+      this.cursor.dragNode.moveBy(-xa, -ya);
     } else {
       this.moveCenter(xa, ya);
     }
@@ -150,20 +156,6 @@ class Renderer {
       }
       this.ctx.strokeStyle = this.gridColor;
       this.ctx.stroke();
-
-      this.ctx.save();
-      this.ctx.rotate(radians(45));
-      this.ctx.beginPath();
-      this.ctx.rect(
-        -this.gridSpacing,// / 2,
-        -this.gridSpacing,// / 2,
-        this.gridSpacing * 2,
-        this.gridSpacing * 2
-      );
-      this.ctx.fillStyle = "#aaf6";
-      this.ctx.closePath();
-      this.ctx.fill();
-      this.ctx.restore();
     }
 
     for (let node of this.nodes) {

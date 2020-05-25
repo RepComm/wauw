@@ -30,6 +30,15 @@ let mouse = {
 on(window, "contextmenu", (evt) => {
   evt.preventDefault();
   let node = renderer.selectNode();
+  if (evt.ctrlKey) {
+    if (renderer.lastSelectedNode) {
+      renderer.lastSelectedNode.connect(node);
+      renderer.lastSelectedNode = undefined;
+    } else {
+      renderer.lastSelectedNode = node;
+    }
+    return;
+  }
   if (!evt.altKey) {
     clearChildren(config);
   }
@@ -67,6 +76,11 @@ on(window, "mousemove", (evt) => {
 
 let audioCtx = new AudioContext();
 let drawCtx = renderer.ctx;
+
+let destNode = new Node(drawCtx, audioCtx, "destination");
+destNode.setPos(renderer.centerX, renderer.centerY);
+renderer.nodes.push(destNode);
+renderer.needsRender = true;
 
 let createNode = (type) => {
   let node = new Node(drawCtx, audioCtx, type);
