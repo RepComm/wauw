@@ -97,12 +97,36 @@ class Node {
         break;
       case "constant":
         this.node = audioCtx.createConstantSource();
+        let offsetSlider = make("input");
+        offsetSlider.classList.add("node-config-slider", "node-controls-colors");
+        offsetSlider.type = "range";
+        offsetSlider.name = "Amount";
+        offsetSlider.min = 0;
+        offsetSlider.max = 1;
+        offsetSlider.value = this.node.offset.value;
+        offsetSlider.step = 0.05;
+        on(offsetSlider, "change", (evt)=>{
+          this.node.offset.value = parseFloat(offsetSlider.value);
+        });
+        this.elementControls.appendChild(offsetSlider);
         break;
       case "convolver":
         this.node = audioCtx.createConvolver();
         break;
       case "delay":
         this.node = audioCtx.createDelay();
+        let delayNum = make("input");
+        delayNum.classList.add("node-config-slider", "node-controls-colors");
+        delayNum.type = "range";
+        delayNum.name = "Amount";
+        delayNum.min = 0;
+        delayNum.max = 1;
+        delayNum.value = this.node.delayTime.value;
+        delayNum.step = 0.05;
+        on(delayNum, "change", (evt)=>{
+          this.node.delayTime.value = parseFloat(delayNum.value);
+        });
+        this.elementControls.appendChild(delayNum);
         break;
       case "dynamicscompressor":
         this.node = audioCtx.createDynamicsCompressor();
@@ -145,13 +169,25 @@ class Node {
         break;
       case "oscillator":
         this.node = audioCtx.createOscillator();
+        let freqSlider = make("input");
+        freqSlider.classList.add("node-config-slider", "node-controls-colors");
+        freqSlider.type = "range";
+        freqSlider.name = "Amount";
+        freqSlider.min = 0;
+        freqSlider.max = this.node.frequency.maxValue/4;
+        freqSlider.value = this.node.frequency.value;
+        freqSlider.step = 0.05;
+        on(freqSlider, "change", (evt)=>{
+          this.node.frequency.value = parseFloat(freqSlider.value);
+        });
+        this.elementControls.appendChild(freqSlider);
         break;
       case "panner":
         this.node = audioCtx.createPanner();
         break;
-      case "periodicwave":
-        this.node = audioCtx.createPeriodicWave();
-        break;
+      // case "periodicwave":
+      //   this.node = audioCtx.createPeriodicWave();
+      //   break;
       case "scriptprocessor":
         // /**@type {ScriptProcessorNode}*/
         this.node = audioCtx.createScriptProcessor();
@@ -184,7 +220,6 @@ class Node {
    * @returns {boolean} true if successful
    */
   connect (to) {
-    console.log("Connect");
     if (this.isConnected(to)) {
       return false;
     }
@@ -274,7 +309,7 @@ class Node {
       }
     }
 
-    let ins = node.node.numberOfOutputs;
+    let ins = node.node.numberOfInputs;
     let inSize = 1 / ins * node.h;
     padSize = inSize / 16;
 

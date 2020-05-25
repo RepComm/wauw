@@ -142,7 +142,11 @@ class Renderer {
         break;
       case "add-select-node": //Connect two nodes when we select them
         if (this.lastSelectedNode) {
-          this.lastSelectedNode.connect(evt.node);
+          if (this.lastSelectedNode.isConnected(evt.node)) {
+            this.lastSelectedNode.disconnect(evt.node);
+          } else {
+            this.lastSelectedNode.connect(evt.node);
+          }
           //Deselects the selected node
           this.lastSelectedNode = undefined;
         } else {
