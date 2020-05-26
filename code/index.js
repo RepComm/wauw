@@ -1,5 +1,5 @@
 
-import { Renderer } from "./wuaw.js";
+import { Renderer } from "./wauw.js";
 import { get, on } from "./aliases.js";
 import { Node } from "./node.js";
 

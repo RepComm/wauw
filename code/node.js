@@ -105,7 +105,7 @@ class Node {
         offsetSlider.max = 1;
         offsetSlider.value = this.node.offset.value;
         offsetSlider.step = 0.05;
-        on(offsetSlider, "change", (evt)=>{
+        on(offsetSlider, "change", (evt) => {
           this.node.offset.value = parseFloat(offsetSlider.value);
         });
         this.elementControls.appendChild(offsetSlider);
@@ -123,7 +123,7 @@ class Node {
         delayNum.max = 1;
         delayNum.value = this.node.delayTime.value;
         delayNum.step = 0.05;
-        on(delayNum, "change", (evt)=>{
+        on(delayNum, "change", (evt) => {
           this.node.delayTime.value = parseFloat(delayNum.value);
         });
         this.elementControls.appendChild(delayNum);
@@ -141,7 +141,7 @@ class Node {
         gainSlider.max = 1;
         gainSlider.value = this.node.gain.value;
         gainSlider.step = 0.05;
-        on(gainSlider, "change", (evt)=>{
+        on(gainSlider, "change", (evt) => {
           this.node.gain.value = parseFloat(gainSlider.value);
         });
         this.elementControls.appendChild(gainSlider);
@@ -170,14 +170,14 @@ class Node {
       case "oscillator":
         this.node = audioCtx.createOscillator();
         let freqSlider = make("input");
-        freqSlider.classList.add("node-config-slider", "node-controls-colors");
-        freqSlider.type = "range";
+        freqSlider.classList.add("node-config-number", "node-controls-colors");
+        freqSlider.type = "number";
         freqSlider.name = "Amount";
         freqSlider.min = 0;
-        freqSlider.max = this.node.frequency.maxValue/4;
+        freqSlider.max = this.node.frequency.maxValue / 4;
         freqSlider.value = this.node.frequency.value;
         freqSlider.step = 0.05;
-        on(freqSlider, "change", (evt)=>{
+        on(freqSlider, "change", (evt) => {
           this.node.frequency.value = parseFloat(freqSlider.value);
         });
         this.elementControls.appendChild(freqSlider);
@@ -194,9 +194,20 @@ class Node {
         break;
       case "stereopanner":
         this.node = audioCtx.createStereoPanner();
+        let panSlider = make("input");
+        panSlider.classList.add("node-config-slider", "node-controls-colors");
+        panSlider.type = "range";
+        panSlider.name = "Amount";
+        panSlider.min = -1;
+        panSlider.max = 1;
+        panSlider.value = this.node.pan.value;
+        panSlider.step = 0.05;
+        on(panSlider, "change", (evt) => {
+          this.node.pan.value = parseFloat(panSlider.value);
+        });
+        this.elementControls.appendChild(panSlider);
         break;
       case "waveshaper":
-        /**@type {WaveShaperNode}*/
         this.node = audioCtx.createWaveShaper();
         break;
       case "destination":
@@ -219,19 +230,20 @@ class Node {
    * @param {Node} to
    * @returns {boolean} true if successful
    */
-  connect (to) {
+  connect(to) {
     if (this.isConnected(to)) {
       return false;
     }
     this.node.connect(to.node);
     this.outputNodes.push(to);
+    return true;
   }
 
   /**Disconnect from another node
    * @param {Node} to 
    * @returns {boolean} successful
    */
-  disconnect (to) {
+  disconnect(to) {
     let ind = this.outputNodes.indexOf(to);
     if (ind === -1) return false;
     this.node.disconnect(to.node);
@@ -239,7 +251,7 @@ class Node {
     return true;
   }
 
-  hasOutput (i) {
+  hasOutput(i) {
     return i < this.outputNodes.length && i >= 0;
   }
 
@@ -247,7 +259,7 @@ class Node {
     this.setPos(this.x + xa, this.y + ya, snap);
   }
 
-  snapTo (snap=0.1) {
+  snapTo(snap = 0.1) {
     this.x = Utils.roundTo(this.x, snap);
     this.y = Utils.roundTo(this.y, snap);
   }
@@ -278,23 +290,27 @@ class Node {
   static render(ctx, node) {
     ctx.save();
 
-    let outs = node.node.numberOfOutputs;
+    //let outs = node.node.numberOfOutputs;
+    let outs = node.outputNodes.length;
+    if (outs < node.node.numberOfOutputs) outs = node.node.numberOfOutputs;
+
     let outSize = 1 / outs * node.h;
     let padSize = outSize / 16;
-
-    for (let i = 0; i < node.node.numberOfOutputs; i++) {
+    
+    for (let i = 0; i < outs; i++) {
+      //for (let i = 0; i < node.node.numberOfOutputs; i++) {
       ctx.fillStyle = node.outputColor;
-      let nx = node.x + node.w/2;
-      let ny = node.y -node.h/2 + (i * outSize + padSize);
+      let nx = node.x + node.w / 2;
+      let ny = node.y - node.h / 2 + (i * outSize + padSize);
       let nw = padSize * outs * 3;
       let nh = outSize - padSize * 2;
 
       if (node.hasOutput(i)) {
         ctx.save();
         ctx.beginPath();
-        ctx.moveTo(nx + nw, ny + nh/2);
+        ctx.moveTo(nx + nw, ny + nh / 2);
         let other = node.outputNodes[i];
-        ctx.lineTo(other.x - other.w/2 - nw, other.y);
+        ctx.lineTo(other.x - other.w / 2 - nw, other.y);
         ctx.closePath();
         ctx.lineWidth *= 4;
         ctx.stroke();
@@ -305,7 +321,7 @@ class Node {
       ctx.fill();
     }
 
-    roundRect(ctx, node.x - node.w/2, node.y - node.h/2, node.w, node.h, 0.1);
+    roundRect(ctx, node.x - node.w / 2, node.y - node.h / 2, node.w, node.h, 0.1);
 
     ctx.fillStyle = node.color;
     ctx.fill();
@@ -316,8 +332,8 @@ class Node {
 
     for (let i = 0; i < node.node.numberOfInputs; i++) {
       ctx.fillStyle = node.inputColor;
-      let nx = node.x -node.w/2 + (-padSize * ins * 3);
-      let ny = node.y -node.h/2 + (i * inSize + padSize);
+      let nx = node.x - node.w / 2 + (-padSize * ins * 3);
+      let ny = node.y - node.h / 2 + (i * inSize + padSize);
 
       let nw = padSize * ins * 3;
       let nh = inSize - padSize * 2;
@@ -329,8 +345,8 @@ class Node {
     ctx.font = node.font;
     ctx.fillText(
       node.name,
-      node.x -node.w/2 + nodeTextPadding,
-      node.y -node.h/2 + (node.fontSize * 1.25)
+      node.x - node.w / 2 + nodeTextPadding,
+      node.y - node.h / 2 + (node.fontSize * 1.25)
     );
     ctx.restore();
   }
