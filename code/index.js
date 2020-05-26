@@ -23,9 +23,10 @@ on(window, "contextmenu", (evt) => {
     type:"select-node",
     node:renderer.selectNode()
   };
+  if (evt.altKey) e.type = "add-select-node";
   if (!e.node) e.type = "deselect-node";
-  
-  if (evt.ctrlKey) e.type = "add-select-node";
+
+  if (evt.ctrlKey) e.type = "connect-node";
 
   renderer.onEvent(e);
 });
@@ -86,7 +87,7 @@ on(get("node-create-mediastreamsource"), "click", () => createNode("mediastreams
 on(get("node-create-mediastreamtracksource"), "click", () => createNode("mediastreamtracksource"));
 on(get("node-create-oscillator"), "click", () => createNode("oscillator"));
 on(get("node-create-panner"), "click", () => createNode("panner"));
-on(get("node-create-periodicwave"), "click", () => createNode("periodicwave"));
 on(get("node-create-scriptprocessor"), "click", () => createNode("scriptprocessor"));
 on(get("node-create-stereopanner"), "click", () => createNode("stereopanner"));
+
 on(get("node-create-waveshaper"), "click", () => createNode("waveshaper"));

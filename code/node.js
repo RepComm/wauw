@@ -277,14 +277,6 @@ class Node {
    */
   static render(ctx, node) {
     ctx.save();
-    ctx.translate(-node.w / 2, -node.h / 2);
-    //ctx.beginPath();
-    roundRect(ctx, 0, 0, node.w, node.h, 0.1);
-    //ctx.rect(0, 0, node.w, node.h);
-    //ctx.closePath();
-
-    ctx.fillStyle = node.color;
-    ctx.fill();
 
     let outs = node.node.numberOfOutputs;
     let outSize = 1 / outs * node.h;
@@ -292,22 +284,31 @@ class Node {
 
     for (let i = 0; i < node.node.numberOfOutputs; i++) {
       ctx.fillStyle = node.outputColor;
-      let nx = node.w;
-      let ny = i * outSize + padSize;
+      let nx = node.x + node.w/2;
+      let ny = node.y -node.h/2 + (i * outSize + padSize);
       let nw = padSize * outs * 3;
       let nh = outSize - padSize * 2;
-      roundRect(ctx, nx, ny, nw, nh, 0.25 * nw);
-      ctx.fill();
 
       if (node.hasOutput(i)) {
+        ctx.save();
         ctx.beginPath();
-        ctx.moveTo(nx, ny);
+        ctx.moveTo(nx + nw, ny + nh/2);
         let other = node.outputNodes[i];
-        ctx.lineTo(other.x - node.x, other.y - node.y);
+        ctx.lineTo(other.x - other.w/2 - nw, other.y);
         ctx.closePath();
+        ctx.lineWidth *= 4;
         ctx.stroke();
+        ctx.restore();
       }
+
+      roundRect(ctx, nx, ny, nw, nh, 0.25 * nw);
+      ctx.fill();
     }
+
+    roundRect(ctx, node.x - node.w/2, node.y - node.h/2, node.w, node.h, 0.1);
+
+    ctx.fillStyle = node.color;
+    ctx.fill();
 
     let ins = node.node.numberOfInputs;
     let inSize = 1 / ins * node.h;
@@ -315,8 +316,8 @@ class Node {
 
     for (let i = 0; i < node.node.numberOfInputs; i++) {
       ctx.fillStyle = node.inputColor;
-      let nx = -padSize * ins * 3;
-      let ny = i * inSize + padSize;
+      let nx = node.x -node.w/2 + (-padSize * ins * 3);
+      let ny = node.y -node.h/2 + (i * inSize + padSize);
 
       let nw = padSize * ins * 3;
       let nh = inSize - padSize * 2;
@@ -326,7 +327,11 @@ class Node {
 
     ctx.fillStyle = "white";
     ctx.font = node.font;
-    ctx.fillText(node.name, nodeTextPadding, node.fontSize * 1.25);
+    ctx.fillText(
+      node.name,
+      node.x -node.w/2 + nodeTextPadding,
+      node.y -node.h/2 + (node.fontSize * 1.25)
+    );
     ctx.restore();
   }
 }

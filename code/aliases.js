@@ -12,7 +12,10 @@ let make = (type) => document.createElement(type);
  * @param {callback} callback 
  * @param {object} options 
  */
-let on = (elem, type, callback, options) => elem.addEventListener(type, callback, options);
+let on = (elem, type, callback, options) => {
+  if (!elem) console.trace("Null");
+  elem.addEventListener(type, callback, options);
+}
 
 let clearChildren = (e)=>{
   while(e.lastChild) {

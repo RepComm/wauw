@@ -136,11 +136,14 @@ class Renderer {
         this.lastSelectedNode = evt.node;
         this.populateConfig(this.lastSelectedNode);
         break;
+      case "add-select-node":
+        this.populateConfig(evt.node, false);
+        break;
       case "deselect-node":
         this.lastSelectedNode = undefined;
         this.populateConfig(undefined, true);
         break;
-      case "add-select-node": //Connect two nodes when we select them
+      case "connect-node": //Connect two nodes when we select them
         if (this.lastSelectedNode) {
           if (this.lastSelectedNode.isConnected(evt.node)) {
             this.lastSelectedNode.disconnect(evt.node);
@@ -200,10 +203,10 @@ class Renderer {
     }
 
     for (let node of this.nodes) {
-      this.ctx.save();
-      this.ctx.translate(node.x, node.y);
+      // this.ctx.save();
+      // this.ctx.translate(node.x, node.y);
       Node.render(this.ctx, node);
-      this.ctx.restore();
+      // this.ctx.restore();
     }
 
     this.ctx.restore();

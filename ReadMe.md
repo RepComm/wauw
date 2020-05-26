@@ -26,6 +26,7 @@ An experiment project for designing audio using the Web Audio API
 
 - Drag a node using left mouse button (0)
 - Open a node's config in the side using right mouse click on the node
+- Open multiple node configs at once by holding ALT while right-clicking nodes
 - Pan around by dragging left mouse button (0) over empty space, or while holding ALT key
 - Zoom using the mouse wheel
 
