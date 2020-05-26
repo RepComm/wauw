@@ -61,4 +61,6 @@ let dist = (x1, y1, x2, y2) => Math.sqrt(
 
 let ndist = (n1, n2) => Math.abs(Math.abs(n1) - Math.abs(n2));
 
-export { Utils, dist, lerp, degrees, radians, pi, ndist };
+let isAnyOf = (e, list) => {list.includes(e);}
+
+export { Utils, dist, lerp, degrees, radians, pi, ndist, isAnyOf };

@@ -2,6 +2,7 @@
 import { rect, on, clearChildren, get } from "./aliases.js";
 import { Utils, radians, ndist, dist } from "./math.js";
 import { Node } from "./node.js";
+import { KeyboardDisplay } from "./keyboard.js";
 
 class Renderer {
   /**
@@ -44,6 +45,8 @@ class Renderer {
 
     /**@type {Node}*/
     this.lastSelectedNode = undefined;
+
+    this.keyboard = new KeyboardDisplay();
 
     this.renderRequestCallback = () => {
       this.render();
@@ -208,6 +211,8 @@ class Renderer {
       Node.render(this.ctx, node);
       // this.ctx.restore();
     }
+
+    this.keyboard.render(this.ctx);
 
     this.ctx.restore();
   }
