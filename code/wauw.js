@@ -1,6 +1,6 @@
 
 import { rect, on, clearChildren, get } from "./aliases.js";
-import { Utils, radians, ndist, dist } from "./math.js";
+import { Utils } from "./math.js";
 import { Node } from "./node.js";
 import { KeyboardDisplay } from "./keyboard.js";
 
@@ -106,6 +106,17 @@ class Renderer {
   }
   mouseDown() {
     this.cursor.dragNode = this.selectNode();
+    if (!this.cursor.dragNode) {
+      //this.cursor.dragNode = this.keyboard;
+      if (this.keyboard.pointInside(this.cursor.localx, this.cursor.localy)) {
+        this.keyboard.onEvent({
+          type:"click",
+          x:this.cursor.localx,
+          y:this.cursor.localy
+        });
+      }
+      //this.keyboard.getNoteForPosition(this.cursor.localx, this.cursor.localy);
+    }
   }
   mouseUp() {
     if (this.cursor.dragNode) {
@@ -213,6 +224,14 @@ class Renderer {
     }
 
     this.keyboard.render(this.ctx);
+
+    this.ctx.fillStyle = "white";
+    this.ctx.font = "0.15px courier";
+    this.ctx.fillText(
+      `x:${this.cursor.localx.toFixed(2)}, y:${this.cursor.localy.toFixed(2)}`,
+      this.cursor.localx,
+      this.cursor.localy
+    );
 
     this.ctx.restore();
   }

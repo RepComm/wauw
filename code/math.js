@@ -63,4 +63,11 @@ let ndist = (n1, n2) => Math.abs(Math.abs(n1) - Math.abs(n2));
 
 let isAnyOf = (e, list) => {list.includes(e);}
 
-export { Utils, dist, lerp, degrees, radians, pi, ndist, isAnyOf };
+let pointInRect = (x, y, rx, ry, rw, rh) => (
+  x > rx &&
+  x < rx + rw &&
+  y > ry &&
+  y < ry + rh
+);
+
+export { Utils, dist, lerp, degrees, radians, pi, ndist, isAnyOf, pointInRect };

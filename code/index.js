@@ -71,6 +71,7 @@ let createNode = (type) => {
   renderer.nodes.push(node);
 
   renderer.needsRender = true;
+  return node;
 }
 
 on(get("node-create-analyser"), "click", () => createNode("analyser"));

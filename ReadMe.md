@@ -8,8 +8,9 @@ An experiment project for designing audio using the Web Audio API
 - Node creation, placement, connections
 - Node config panel (a few controls implemented)
 
+- Generic keyboard (partial implementation)
+
 ## Planned features
-- Flexible keyboard for note generation
 - Instrument / component JSON save files w/ import
 - Node grouping
 - External audio file loading
