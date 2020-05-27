@@ -1,38 +1,7 @@
 
 import { make, on } from "./aliases.js";
 
-import { Utils } from "./math.js";
-
-/**Modified from https://stackoverflow.com/a/3368118
- * @param {CanvasRenderingContext2D} ctx
- * @param {Number} w
- * @param {Number} h
- * @param {Number} x
- * @param {Number} y
- * @param {Number|{topLeft:Number,topRight:Number,bottomRight:Number,bottomLeft:Number}} radius
- */
-function roundRect(ctx, x, y, width, height, radius) {
-  if (typeof radius === "number") {
-    radius = { tl: radius, tr: radius, br: radius, bl: radius };
-  } else {
-    let defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
-    for (let side in defaultRadius) {
-      radius[side] = radius[side] || defaultRadius[side];
-    }
-  }
-
-  ctx.beginPath();
-  ctx.moveTo(x + radius.tl, y);
-  ctx.lineTo(x + width - radius.tr, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-  ctx.lineTo(x + width, y + height - radius.br);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-  ctx.lineTo(x + radius.bl, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-  ctx.lineTo(x, y + radius.tl);
-  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
-  ctx.closePath();
-}
+import { Utils, roundRect } from "./math.js";
 
 const nodeTextPadding = 0.1;
 

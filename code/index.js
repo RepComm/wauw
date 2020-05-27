@@ -96,6 +96,5 @@ on(get("node-create-oscillator"), "click", () => createNode("oscillator"));
 on(get("node-create-panner"), "click", () => createNode("panner"));
 on(get("node-create-scriptprocessor"), "click", () => createNode("scriptprocessor"));
 on(get("node-create-stereopanner"), "click", () => createNode("stereopanner"));
-
 on(get("node-create-keyboard"), "click", () => createNode("keyboard"));
 on(get("node-create-waveshaper"), "click", () => createNode("waveshaper"));

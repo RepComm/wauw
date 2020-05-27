@@ -105,14 +105,18 @@ class Renderer {
   mouseDown() {
     this.cursor.dragNode = this.selectNode();
     if (!this.cursor.dragNode) {
-      //this.cursor.dragNode = this.keyboard;
-      // if (this.keyboard.pointInside(this.cursor.localx, this.cursor.localy)) {
-      //   this.keyboard.onEvent({
-      //     type:"click",
-      //     x:this.cursor.localx,
-      //     y:this.cursor.localy
-      //   });
-      // }
+      for (let node of this.nodes) {
+        if (node instanceof KeyboardDisplay) {
+          if (node.pointInsidePiano(this.cursor.localx, this.cursor.localy)) {
+            node.onEvent({
+              type: "mouse-down",
+              x: this.cursor.localx,
+              y: this.cursor.localy
+            });
+            return;
+          }
+        }
+      }
     }
   }
   mouseUp() {
@@ -120,8 +124,22 @@ class Renderer {
       this.cursor.dragNode.snapTo(0.25);
       this.cursor.dragNode = undefined;
       this.needsRender = true;
+    } else {
+      for (let node of this.nodes) {
+        if (node instanceof KeyboardDisplay) {
+          if (node.pointInsidePiano(this.cursor.localx, this.cursor.localy)) {
+            node.onEvent({
+              type: "mouse-up",
+              x: this.cursor.localx,
+              y: this.cursor.localy
+            });
+            return;
+          }
+        }
+      }
     }
   }
+  
   mouseDrag(xa, ya, forceMoveCenter) {
     if (this.cursor.dragNode && !forceMoveCenter) {
       this.cursor.dragNode.moveBy(-xa, -ya);
