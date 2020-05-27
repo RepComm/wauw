@@ -1,4 +1,5 @@
 
+import { Node } from "./node.js";
 import { lerp, pointInRect, Utils } from "./math.js";
 
 let twelthRootTwo = 1.059463094359;
@@ -37,40 +38,25 @@ export function noteToFreq (halfSteps, moreOctaves=0, fromFreq=A4) {
   return stepsToFreq(halfSteps + (moreOctaves*12), fromFreq);
 }
 
-export class KeyboardDisplay {
-  constructor () {
+console.trace("Node");
+
+export class KeyboardDisplay extends Node {
+  /**@param {CanvasRenderingContext2D} drawCtx
+   * @param {AudioContext} audioCtx
+   * @param {String} name
+   */
+  constructor (drawCtx, audioCtx, name) {
+    super(drawCtx, audioCtx, "keyboard");
     this.range = 24;
-    this.x = 0;
-    this.y = 0;
     this.w = 8;
     this.h = 1;
-    console.log(this);
     this.blackNoteHeight = 0.75;
-  }
-
-  moveBy(xa, ya, snap = 0) {
-    this.setPos(this.x + xa, this.y + ya, snap);
-  }
-
-  snapTo(snap = 0.1) {
-    this.x = Utils.roundTo(this.x, snap);
-    this.y = Utils.roundTo(this.y, snap);
-  }
-
-  setPos(x, y, snap = 0) {
-    if (snap !== 0) {
-      this.x = Utils.roundTo(x, snap);
-      this.y = Utils.roundTo(y, snap);
-    } else {
-      this.x = x;
-      this.y = y;
-    }
   }
 
   /**@param {CanvasRenderingContext2D} drawCtx 
    */
-  render (drawCtx) {
-    this.drawCtx = drawCtx;
+  render () {
+    this.drawCtx.save();
     let nx = this.x;
     let ny = this.y;
     let nw = 0;
@@ -96,11 +82,11 @@ export class KeyboardDisplay {
         
       } else {
         nh = this.h;
-        drawCtx.fillStyle = whiteNoteColor;
+        this.drawCtx.fillStyle = whiteNoteColor;
 
-        drawCtx.fillRect(nx, ny, nw, nh);
-        drawCtx.strokeStyle = "black";
-        drawCtx.strokeRect(nx, ny, nw, nh);
+        this.drawCtx.fillRect(nx, ny, nw, nh);
+        this.drawCtx.strokeStyle = "black";
+        this.drawCtx.strokeRect(nx, ny, nw, nh);
 
         nx += noteWidth;
       }
@@ -116,23 +102,21 @@ export class KeyboardDisplay {
 
       if (blackNotes.includes(note)) {
         nx -= noteWidth / 2;
-        drawCtx.fillStyle = blackNoteColor;
+        this.drawCtx.fillStyle = blackNoteColor;
         nh = this.h * this.blackNoteHeight;
 
         nw *= 0.5;
 
-        drawCtx.fillRect(nx + (nw/2), ny, nw, nh);
-        drawCtx.strokeStyle = "black";
-        drawCtx.strokeRect(nx + (nw/2), ny, nw, nh);
+        this.drawCtx.fillRect(nx + (nw/2), ny, nw, nh);
+        this.drawCtx.strokeStyle = "black";
+        this.drawCtx.strokeRect(nx + (nw/2), ny, nw, nh);
 
         nx += noteWidth / 2;
       } else {
         nx += noteWidth;
       }
     }
-
-    drawCtx.strokeStyle = "red";
-    drawCtx.strokeRect(this.x, this.y, this.w, this.h);
+    this.drawCtx.restore();
   }
 
   getNoteForPosition (x, y) {

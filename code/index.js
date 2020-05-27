@@ -2,6 +2,7 @@
 import { Renderer } from "./wauw.js";
 import { get, on } from "./aliases.js";
 import { Node } from "./node.js";
+import { KeyboardDisplay } from "./keyboard.js";
 
 let canvas = get("canvas");
 /**@type {Renderer} */
@@ -65,7 +66,12 @@ renderer.nodes.push(destNode);
 renderer.needsRender = true;
 
 let createNode = (type) => {
-  let node = new Node(drawCtx, audioCtx, type);
+  let node;
+  if (type === "keyboard") {
+    node = new KeyboardDisplay(drawCtx, audioCtx, "keyboard");
+  } else {
+    node = new Node(drawCtx, audioCtx, type);
+  }
   node.setPos(renderer.centerX, renderer.centerY);
 
   renderer.nodes.push(node);
@@ -91,4 +97,5 @@ on(get("node-create-panner"), "click", () => createNode("panner"));
 on(get("node-create-scriptprocessor"), "click", () => createNode("scriptprocessor"));
 on(get("node-create-stereopanner"), "click", () => createNode("stereopanner"));
 
+on(get("node-create-keyboard"), "click", () => createNode("keyboard"));
 on(get("node-create-waveshaper"), "click", () => createNode("waveshaper"));

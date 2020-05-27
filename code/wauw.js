@@ -46,8 +46,6 @@ class Renderer {
     /**@type {Node}*/
     this.lastSelectedNode = undefined;
 
-    this.keyboard = new KeyboardDisplay();
-
     this.renderRequestCallback = () => {
       this.render();
     };
@@ -108,14 +106,13 @@ class Renderer {
     this.cursor.dragNode = this.selectNode();
     if (!this.cursor.dragNode) {
       //this.cursor.dragNode = this.keyboard;
-      if (this.keyboard.pointInside(this.cursor.localx, this.cursor.localy)) {
-        this.keyboard.onEvent({
-          type:"click",
-          x:this.cursor.localx,
-          y:this.cursor.localy
-        });
-      }
-      //this.keyboard.getNoteForPosition(this.cursor.localx, this.cursor.localy);
+      // if (this.keyboard.pointInside(this.cursor.localx, this.cursor.localy)) {
+      //   this.keyboard.onEvent({
+      //     type:"click",
+      //     x:this.cursor.localx,
+      //     y:this.cursor.localy
+      //   });
+      // }
     }
   }
   mouseUp() {
@@ -219,11 +216,13 @@ class Renderer {
     for (let node of this.nodes) {
       // this.ctx.save();
       // this.ctx.translate(node.x, node.y);
-      Node.render(this.ctx, node);
+      if (node instanceof KeyboardDisplay) {
+        node.render();
+      } else {
+        Node.render(this.ctx, node);
+      }
       // this.ctx.restore();
     }
-
-    this.keyboard.render(this.ctx);
 
     this.ctx.fillStyle = "white";
     this.ctx.font = "0.15px courier";

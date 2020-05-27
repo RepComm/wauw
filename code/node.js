@@ -39,7 +39,7 @@ const nodeTextPadding = 0.1;
 class Node {
   /**@param {CanvasRenderingContext2D} drawCtx
    * @param {AudioContext} audioCtx
-   * @param {"analyser"|"biquadfilter"|"constant"|"convolver"|"delay"|"dynamicscompressor"|"gain"|"iirfilter"|"mediaelementsource"|"mediastreamdestination"|"mediastreamsource"|"mediastreamtracksource"|"oscillator"|"panner"|"periodicwave"|"scriptprocessor"|"stereopanner"|"waveshaper"} type
+   * @param {"keyboard"|"analyser"|"biquadfilter"|"constant"|"convolver"|"delay"|"dynamicscompressor"|"gain"|"iirfilter"|"mediaelementsource"|"mediastreamdestination"|"mediastreamsource"|"mediastreamtracksource"|"oscillator"|"panner"|"periodicwave"|"scriptprocessor"|"stereopanner"|"waveshaper"} type
    * @param {String} name
    */
   constructor(drawCtx, audioCtx, type, name) {
@@ -185,11 +185,7 @@ class Node {
       case "panner":
         this.node = audioCtx.createPanner();
         break;
-      // case "periodicwave":
-      //   this.node = audioCtx.createPeriodicWave();
-      //   break;
       case "scriptprocessor":
-        // /**@type {ScriptProcessorNode}*/
         this.node = audioCtx.createScriptProcessor();
         break;
       case "stereopanner":
@@ -213,13 +209,18 @@ class Node {
       case "destination":
         this.node = audioCtx.destination;
         break;
+      case "keyboard":
+        console.log("Keyboard");
+        break;
       default:
         throw "Node type " + this.type + " is not handled!";
     }
-    if (this.node.start) {
-      this.node.start();
+    if (this.node) {
+      if (this.node.start) {
+        this.node.start();
+      }
+      this.node.element = this;
     }
-    this.node.element = this;
   }
 
   isConnected(to) {
@@ -296,7 +297,7 @@ class Node {
 
     let outSize = 1 / outs * node.h;
     let padSize = outSize / 16;
-    
+
     for (let i = 0; i < outs; i++) {
       //for (let i = 0; i < node.node.numberOfOutputs; i++) {
       ctx.fillStyle = node.outputColor;
