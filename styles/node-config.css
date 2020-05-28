@@ -23,6 +23,7 @@
   display:flex;
   flex-direction:column;
   overflow-y:auto;
+  overflow-x:hidden;
 }
 
 .node-config-controls > * {
@@ -60,10 +61,31 @@
 	border-radius: 0.25em;
 	margin-left: 5px;
 	margin-right: 5px;
-	text-align: center;
+  text-align: center;
+  
+  -webkit-touch-callout: unset; /* iOS Safari */
+    -webkit-user-select: unset; /* Safari */
+     -khtml-user-select: unset; /* Konqueror HTML */
+       -moz-user-select: unset; /* Old versions of Firefox */
+        -ms-user-select: unset; /* Internet Explorer/Edge */
+            user-select: unset; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 .node-controls-colors {
   background-color:rgb(56, 56, 56);
   color:rgb(167, 167, 167);
+}
+
+.node-config-knob {
+  text-align:center;
+}
+
+.node-config-knob-control {
+  height:4em;
+  cursor:pointer;
+}
+
+.node-config-knob-label {
+
 }

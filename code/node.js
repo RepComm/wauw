@@ -2,6 +2,7 @@
 import { make, on, setProps } from "./aliases.js";
 
 import { Utils, roundRect, isAnyOf } from "./math.js";
+import { Knob } from "./ui/knob.js";
 
 const nodeTextPadding = 0.1;
 
@@ -65,83 +66,57 @@ class Node {
         break;
       case "biquadfilter":
         this.node = audioCtx.createBiquadFilter();
-        //FREQUENCY CONTROL
-        label = make("label");
-        label.textContent = "Frequency";
-        this.elementControls.appendChild(label);
 
-        let freqCtrl = make("input");
-        freqCtrl.classList.add("node-config-number", "node-controls-colors");
-        setProps(freqCtrl, {
-          type:"number",
-          name:"Frequency",
-          min:0,
-          max:this.node.frequency.maxValue / 4,
-          value:this.node.frequency.value
-        });
-        on(freqCtrl, "change", (evt) => {
-          this.node.frequency.value = parseFloat(freqCtrl.value);
-        });
-        this.elementControls.appendChild(freqCtrl);
+        let freqCtrl = new Knob()
+          .label("Frequency", "node-config-knob-label")
+          .min(0)
+          .max(this.node.frequency.maxValue / 8)
+          .maxRotation(4)
+          .onChange((evt)=>{
+            console.log(evt.detail.value);
+            this.node.frequency.value = evt.detail.value;
+          })
+          .styleClasses("node-config-knob")
+          .knobStyle("./textures/knob01.svg", "node-config-knob-control")
+          .mount(this.elementControls);
 
-        //DETUNE CONTROL
-        label = make("label");
-        label.textContent = "Detune";
-        this.elementControls.appendChild(label);
-
-        let detuneCtrl = make("input");
-        detuneCtrl.classList.add("node-config-number", "node-controls-colors");
-        setProps(detuneCtrl, {
-          type:"number",
-          name:"Detune (cents)",
-          min:440*-4,
-          max:440*4,
-          value:this.node.detune.value
-        });
-        on(detuneCtrl, "change", (evt) => {
-          this.node.detune.value = parseFloat(detuneCtrl.value);
-        });
-        this.elementControls.appendChild(detuneCtrl);
-
-        //Q FACTOR CONTROL
-        label = make("label");
-        label.textContent = "Q";
-        this.elementControls.appendChild(label);
-
-        let qCtrl = make("input");
-        qCtrl.classList.add("node-config-number", "node-controls-colors");
-        setProps(qCtrl, {
-          type:"number",
-          name:"Q",
-          min:0.0001,
-          max:1000,
-          value:this.node.Q.value
-        });
-        on(qCtrl, "change", (evt) => {
-          console.log(qCtrl);
-          this.node.Q.value = parseFloat(qCtrl.value);
-        });
-        this.elementControls.appendChild(qCtrl);
-
-        //GAIN CONTROL
-        label = make("label");
-        label.textContent = "Gain";
-        this.elementControls.appendChild(label);
-
-        let bGainCtrl = make("input");
-        bGainCtrl.classList.add("node-config-number", "node-controls-colors");
-        setProps(bGainCtrl, {
-          type:"number",
-          name:"gain",
-          min:-40,
-          max:40,
-          value:this.node.gain.value
-        });
-        on(bGainCtrl, "change", (evt) => {
-          console.log(bGainCtrl);
-          this.node.gain.value = parseFloat(bGainCtrl.value);
-        });
-        this.elementControls.appendChild(bGainCtrl);
+        
+        let detuneCtrl = new Knob()
+          .label("Detune (cents)", "node-config-knob-label")
+          .min(440*-4)
+          .max(440*4)
+          .maxRotation(2)
+          .onChange((evt)=>{
+            this.node.detune.value = evt.detail.value;
+          })
+          .styleClasses("node-config-knob")
+          .knobStyle("./textures/knob01.svg", "node-config-knob-control")
+          .mount(this.elementControls);
+        
+        let qCtrl = new Knob()
+          .label("Q (quality)", "node-config-knob-label")
+          .min(0.0001)
+          .max(1000)
+          .maxRotation(3)
+          .onChange((evt)=>{
+            this.node.Q.value = evt.detail.value;
+          })
+          .styleClasses("node-config-knob")
+          .knobStyle("./textures/knob01.svg", "node-config-knob-control")
+          .mount(this.elementControls);
+        
+        
+        let bGainCtrl = new Knob()
+          .label("Gain (dB)", "node-config-knob-label")
+          .min(-40)
+          .max(40)
+          .maxRotation(1)
+          .onChange((evt)=>{
+            this.node.gain.value = evt.detail.value;
+          })
+          .styleClasses("node-config-knob")
+          .knobStyle("./textures/knob01.svg", "node-config-knob-control")
+          .mount(this.elementControls);
 
         //BIQUAD FILTER TYPE
         label = make("label");
@@ -274,22 +249,17 @@ class Node {
       case "gain":
         this.node = audioCtx.createGain();
 
-        label = make("label");
-        label.textContent = "Gain";
-        this.elementControls.appendChild(label);
-
-        let gainSlider = make("input");
-        gainSlider.classList.add("node-config-slider", "node-controls-colors");
-        gainSlider.type = "range";
-        gainSlider.name = "Amount";
-        gainSlider.min = 0;
-        gainSlider.max = 1;
-        gainSlider.value = this.node.gain.value;
-        gainSlider.step = 0.05;
-        on(gainSlider, "change", (evt) => {
-          this.node.gain.value = parseFloat(gainSlider.value);
-        });
-        this.elementControls.appendChild(gainSlider);
+        let bGainCtrl0 = new Knob()
+          .label("Gain (dB)", "node-config-knob-label")
+          .min(-40)
+          .max(40)
+          .maxRotation(1)
+          .onChange((evt)=>{
+            this.node.gain.value = evt.detail.value;
+          })
+          .styleClasses("node-config-knob")
+          .knobStyle("./textures/knob01.svg", "node-config-knob-control")
+          .mount(this.elementControls);
         break;
       case "iirfilter":
         throw "Not implemented";
@@ -322,22 +292,19 @@ class Node {
         break;
       case "oscillator":
         this.node = audioCtx.createOscillator();
-        label = make("label");
-        label.textContent = "Frequency";
-        this.elementControls.appendChild(label);
 
-        let freqSlider = make("input");
-        freqSlider.classList.add("node-config-number", "node-controls-colors");
-        freqSlider.type = "number";
-        freqSlider.name = "Amount";
-        freqSlider.min = 0;
-        freqSlider.max = this.node.frequency.maxValue / 4;
-        freqSlider.value = this.node.frequency.value;
-        freqSlider.step = 0.05;
-        on(freqSlider, "change", (evt) => {
-          this.node.frequency.value = parseFloat(freqSlider.value);
-        });
-        this.elementControls.appendChild(freqSlider);
+        let freqCtrl1 = new Knob()
+          .label("Frequency", "node-config-knob-label")
+          .min(0)
+          .max(this.node.frequency.maxValue / 8)
+          .maxRotation(4)
+          .onChange((evt)=>{
+            console.log(evt.detail.value);
+            this.node.frequency.value = evt.detail.value;
+          })
+          .styleClasses("node-config-knob")
+          .knobStyle("./textures/knob01.svg", "node-config-knob-control")
+          .mount(this.elementControls);
 
         label = make("label");
         label.textContent = "wave type";
@@ -382,22 +349,17 @@ class Node {
         });
         this.elementControls.appendChild(waveSelect);
 
-        label = make("label");
-        label.textContent = "Detune (cents)";
-        this.elementControls.appendChild(label);
-
-        let detuneSlider = make("input");
-        detuneSlider.classList.add("node-config-number", "node-controls-colors");
-        detuneSlider.type = "number";
-        detuneSlider.name = "Amount";
-        detuneSlider.min = -100;
-        detuneSlider.max = 100;
-        detuneSlider.value = this.node.detune.value;
-        detuneSlider.step = 0.05;
-        on(detuneSlider, "change", (evt) => {
-          this.node.detune.value = parseFloat(detuneSlider.value);
-        });
-        this.elementControls.appendChild(detuneSlider);
+        let detuneCtrl0 = new Knob()
+          .label("Detune (cents)", "node-config-knob-label")
+          .min(440*-4)
+          .max(440*4)
+          .maxRotation(2)
+          .onChange((evt)=>{
+            this.node.detune.value = evt.detail.value;
+          })
+          .styleClasses("node-config-knob")
+          .knobStyle("./textures/knob01.svg", "node-config-knob-control")
+          .mount(this.elementControls);
         break;
       case "panner":
         this.node = audioCtx.createPanner();

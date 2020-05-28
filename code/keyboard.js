@@ -1,7 +1,7 @@
 
 import { Node } from "./node.js";
 import { lerp, pointInRect, roundRect } from "./math.js";
-import { make, on } from "./aliases.js";
+import { Knob } from "./ui/knob.js";
 
 let twelthRootTwo = 1.059463094359;
 let A3 = 220;
@@ -58,21 +58,17 @@ export class KeyboardDisplay extends Node {
 
     this.baseFrequency = A3;
     
-    let label = make("label");
-    label.textContent = "Base Frequency";
-    this.elementControls.appendChild(label);
-
-    let baseFreqInput = make("input");
-    baseFreqInput.classList.add("node-config-number", "node-controls-colors");
-    baseFreqInput.type = "number";
-    baseFreqInput.name = "Base Frequency";
-    baseFreqInput.min = 0;
-    baseFreqInput.max = 440*24;
-    baseFreqInput.value = this.baseFrequency;
-    on(baseFreqInput, "change", (evt) => {
-      this.baseFrequency = parseFloat(baseFreqInput.value);
-    });
-    this.elementControls.appendChild(baseFreqInput);
+    let freqCtrl1 = new Knob()
+      .label("Base Frequency", "node-config-knob-label")
+      .min(0)
+      .max(440*4)
+      .maxRotation(4)
+      .onChange((evt)=>{
+        this.node.baseFrequency = evt.detail.value;
+      })
+      .styleClasses("node-config-knob")
+      .knobStyle("./textures/knob01.svg", "node-config-knob-control")
+      .mount(this.elementControls);
   }
 
   /**@param {CanvasRenderingContext2D} drawCtx 

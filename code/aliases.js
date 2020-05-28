@@ -33,4 +33,15 @@ let setProps = (o, props)=>{
   }
 }
 
-export { get, getByClass, rect, make, on, clearChildren, setProps };
+/**Apply classes to an element
+ * @param {HTMLElement} e Element to apply to
+ * @param  {...string} classes classes to apply
+ */
+let applyStyleClasses = (e, ...classes) => {
+  if (!classes) return;
+  for (let c of classes) {
+    e.classList.add(c);
+  }
+}
+
+export { get, getByClass, rect, make, on, clearChildren, setProps, applyStyleClasses };

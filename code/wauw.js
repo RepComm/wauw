@@ -242,13 +242,13 @@ class Renderer {
       // this.ctx.restore();
     }
 
-    this.ctx.fillStyle = "white";
-    this.ctx.font = "0.15px courier";
-    this.ctx.fillText(
-      `x:${this.cursor.localx.toFixed(2)}, y:${this.cursor.localy.toFixed(2)}`,
-      this.cursor.localx,
-      this.cursor.localy
-    );
+    // this.ctx.fillStyle = "white";
+    // this.ctx.font = "0.15px courier";
+    // this.ctx.fillText(
+    //   `x:${this.cursor.localx.toFixed(2)}, y:${this.cursor.localy.toFixed(2)}`,
+    //   this.cursor.localx,
+    //   this.cursor.localy
+    // );
 
     this.ctx.restore();
   }
