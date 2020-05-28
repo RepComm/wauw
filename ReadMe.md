@@ -6,9 +6,8 @@ An experiment project for designing audio using the Web Audio API
 ## Implemented features
 - Unlimited scalable/pannable grid
 - Node creation, placement, connections
-- Node config panel (a few controls implemented)
-
-- Generic keyboard (partial implementation)
+- Node config panel (mostly implemented)
+- Generic keyboard (mostly implemented)
 
 ## Planned features
 - Instrument / component JSON save files w/ import

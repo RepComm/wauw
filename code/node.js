@@ -1,7 +1,7 @@
 
 import { make, on, setProps } from "./aliases.js";
 
-import { Utils, roundRect } from "./math.js";
+import { Utils, roundRect, isAnyOf } from "./math.js";
 
 const nodeTextPadding = 0.1;
 
@@ -30,7 +30,7 @@ class Node {
 
     /**@type {HTMLSpanElement} Title span of the node*/
     this.elementTitle = make("span");
-    this.elementTitle.classList.add("node-config-title", "node-controls-colors");
+    this.elementTitle.classList.add("node-config-title");
     this.elementTitle.textContent = this.name;
     this.element.appendChild(this.elementTitle);
 
@@ -57,12 +57,179 @@ class Node {
     this.node;
     this.audioCtx = audioCtx;
 
+    let label;
+
     switch (this.type) {
       case "analyser":
         this.node = audioCtx.createAnalyser();
         break;
       case "biquadfilter":
         this.node = audioCtx.createBiquadFilter();
+        //FREQUENCY CONTROL
+        label = make("label");
+        label.textContent = "Frequency";
+        this.elementControls.appendChild(label);
+
+        let freqCtrl = make("input");
+        freqCtrl.classList.add("node-config-number", "node-controls-colors");
+        setProps(freqCtrl, {
+          type:"number",
+          name:"Frequency",
+          min:0,
+          max:this.node.frequency.maxValue / 4,
+          value:this.node.frequency.value
+        });
+        on(freqCtrl, "change", (evt) => {
+          this.node.frequency.value = parseFloat(freqCtrl.value);
+        });
+        this.elementControls.appendChild(freqCtrl);
+
+        //DETUNE CONTROL
+        label = make("label");
+        label.textContent = "Detune";
+        this.elementControls.appendChild(label);
+
+        let detuneCtrl = make("input");
+        detuneCtrl.classList.add("node-config-number", "node-controls-colors");
+        setProps(detuneCtrl, {
+          type:"number",
+          name:"Detune (cents)",
+          min:440*-4,
+          max:440*4,
+          value:this.node.detune.value
+        });
+        on(detuneCtrl, "change", (evt) => {
+          this.node.detune.value = parseFloat(detuneCtrl.value);
+        });
+        this.elementControls.appendChild(detuneCtrl);
+
+        //Q FACTOR CONTROL
+        label = make("label");
+        label.textContent = "Q";
+        this.elementControls.appendChild(label);
+
+        let qCtrl = make("input");
+        qCtrl.classList.add("node-config-number", "node-controls-colors");
+        setProps(qCtrl, {
+          type:"number",
+          name:"Q",
+          min:0.0001,
+          max:1000,
+          value:this.node.Q.value
+        });
+        on(qCtrl, "change", (evt) => {
+          console.log(qCtrl);
+          this.node.Q.value = parseFloat(qCtrl.value);
+        });
+        this.elementControls.appendChild(qCtrl);
+
+        //GAIN CONTROL
+        label = make("label");
+        label.textContent = "Gain";
+        this.elementControls.appendChild(label);
+
+        let bGainCtrl = make("input");
+        bGainCtrl.classList.add("node-config-number", "node-controls-colors");
+        setProps(bGainCtrl, {
+          type:"number",
+          name:"gain",
+          min:-40,
+          max:40,
+          value:this.node.gain.value
+        });
+        on(bGainCtrl, "change", (evt) => {
+          console.log(bGainCtrl);
+          this.node.gain.value = parseFloat(bGainCtrl.value);
+        });
+        this.elementControls.appendChild(bGainCtrl);
+
+        //BIQUAD FILTER TYPE
+        label = make("label");
+        label.textContent = "filter type";
+        this.elementControls.appendChild(label);
+
+        let filterCtrl = make("select");
+        filterCtrl.classList.add("node-config-select");
+        setProps(filterCtrl, {
+          name:"filter type",
+          value:this.node.type.value
+        });
+        let filterOptionCtrl = make("option");
+        setProps(filterOptionCtrl, {
+          value:"lowpass",
+          textContent:"lowpass"
+        });
+        filterCtrl.appendChild(filterOptionCtrl);
+
+        filterOptionCtrl = make("option");
+        setProps(filterOptionCtrl, {
+          value:"highpass",
+          textContent:"highpass"
+        });
+        filterCtrl.appendChild(filterOptionCtrl);
+
+        filterOptionCtrl = make("option");
+        setProps(filterOptionCtrl, {
+          value:"bandpass",
+          textContent:"bandpass"
+        });
+        filterCtrl.appendChild(filterOptionCtrl);
+
+        filterOptionCtrl = make("option");
+        setProps(filterOptionCtrl, {
+          value:"lowshelf",
+          textContent:"lowshelf"
+        });
+        filterCtrl.appendChild(filterOptionCtrl);
+
+        filterOptionCtrl = make("option");
+        setProps(filterOptionCtrl, {
+          value:"highshelf",
+          textContent:"highshelf"
+        });
+        filterCtrl.appendChild(filterOptionCtrl);
+
+        filterOptionCtrl = make("option");
+        setProps(filterOptionCtrl, {
+          value:"peaking",
+          textContent:"peaking"
+        });
+        filterCtrl.appendChild(filterOptionCtrl);
+
+        filterOptionCtrl = make("option");
+        setProps(filterOptionCtrl, {
+          value:"notch",
+          textContent:"notch"
+        });
+        filterCtrl.appendChild(filterOptionCtrl);
+
+        filterOptionCtrl = make("option");
+        setProps(filterOptionCtrl, {
+          value:"allpass",
+          textContent:"allpass"
+        });
+        filterCtrl.appendChild(filterOptionCtrl);
+
+        on(filterCtrl, "change", (evt)=>{
+          if (isAnyOf(filterCtrl.value, [
+            "lowpass", "highpass", "bandpass"
+          ])) {
+            bGainCtrl.style.display = "none";
+          } else {
+            bGainCtrl.style.display = "unset";
+          }
+
+          if (isAnyOf(filterCtrl.value, [
+            "lowshelf", "highshelf"
+          ])) {
+            qCtrl.style.display = "none";
+          } else {
+            qCtrl.style.display = "unset";
+          }
+          this.node.type = filterCtrl.value;
+        });
+        this.elementControls.appendChild(filterCtrl);
+
         break;
       case "constant":
         this.node = audioCtx.createConstantSource();
@@ -84,9 +251,13 @@ class Node {
         break;
       case "delay":
         this.node = audioCtx.createDelay();
+        label = make("label");
+        label.textContent = "Delay (s)";
+        this.elementControls.appendChild(label);
+
         let delayNum = make("input");
-        delayNum.classList.add("node-config-slider", "node-controls-colors");
-        delayNum.type = "range";
+        delayNum.classList.add("node-config-number", "node-controls-colors");
+        delayNum.type = "number";
         delayNum.name = "Amount";
         delayNum.min = 0;
         delayNum.max = 1;
@@ -102,6 +273,11 @@ class Node {
         break;
       case "gain":
         this.node = audioCtx.createGain();
+
+        label = make("label");
+        label.textContent = "Gain";
+        this.elementControls.appendChild(label);
+
         let gainSlider = make("input");
         gainSlider.classList.add("node-config-slider", "node-controls-colors");
         gainSlider.type = "range";
@@ -120,10 +296,18 @@ class Node {
         //this.node = audioCtx.createIIRFilter();
         break;
       case "mediaelementsource":
+        label = make("label");
+        label.textContent = "Controls";
+        this.elementControls.appendChild(label);
+
         let audioElement = make("audio");
         audioElement.controls = true;
         audioElement.classList.add("node-config-mediasource", "node-controls-colors");
         this.elementControls.appendChild(audioElement);
+
+        label = make("label");
+        label.textContent = "Source";
+        this.elementControls.appendChild(label);
 
         this.node = audioCtx.createMediaElementSource(audioElement);
         break;
@@ -138,6 +322,10 @@ class Node {
         break;
       case "oscillator":
         this.node = audioCtx.createOscillator();
+        label = make("label");
+        label.textContent = "Frequency";
+        this.elementControls.appendChild(label);
+
         let freqSlider = make("input");
         freqSlider.classList.add("node-config-number", "node-controls-colors");
         freqSlider.type = "number";
@@ -150,6 +338,10 @@ class Node {
           this.node.frequency.value = parseFloat(freqSlider.value);
         });
         this.elementControls.appendChild(freqSlider);
+
+        label = make("label");
+        label.textContent = "wave type";
+        this.elementControls.appendChild(label);
 
         let waveSelect = make("select");
         waveSelect.classList.add("node-config-select");
@@ -190,6 +382,10 @@ class Node {
         });
         this.elementControls.appendChild(waveSelect);
 
+        label = make("label");
+        label.textContent = "Detune (cents)";
+        this.elementControls.appendChild(label);
+
         let detuneSlider = make("input");
         detuneSlider.classList.add("node-config-number", "node-controls-colors");
         detuneSlider.type = "number";
@@ -211,6 +407,10 @@ class Node {
         break;
       case "stereopanner":
         this.node = audioCtx.createStereoPanner();
+        label = make("label");
+        label.textContent = "Pan (L R)";
+        this.elementControls.appendChild(label);
+
         let panSlider = make("input");
         panSlider.classList.add("node-config-slider", "node-controls-colors");
         panSlider.type = "range";
@@ -229,9 +429,12 @@ class Node {
         break;
       case "destination":
         this.node = audioCtx.destination;
+        label = make("label");
+        label.textContent = "Audio Output";
+        this.elementControls.appendChild(label);
         break;
       case "keyboard":
-        console.log("Keyboard");
+        
         break;
       default:
         throw "Node type " + this.type + " is not handled!";

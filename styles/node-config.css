@@ -14,21 +14,19 @@
 	text-align: center;
 	font-size: 1.5em;
 	font-weight: bold;
-	font-variant-caps: all-small-caps;
+  font-variant-caps: all-small-caps;
+  color:#f06bc2;
+  background-color:rgb(56, 56, 56);
 }
 
 .node-config-controls {
   display:flex;
   flex-direction:column;
+  overflow-y:auto;
 }
 
 .node-config-controls > * {
   margin-bottom:1em;
-}
-
-.node-controls-colors {
-  background-color:rgb(56, 56, 56);
-  color:rgb(167, 167, 167);
 }
 
 .node-config-slider {
@@ -47,5 +45,25 @@
 
 .node-config-select {
   -webkit-appearance: none;
-  appearance: none;
+	appearance: none;
+	border: 0px;
+	border-radius: 0.25em;
+	margin-left: 5px;
+	margin-right: 5px;
+	text-align: center;
+}
+
+.node-config-number {
+	-webkit-appearance: none;
+	appearance: none;
+	border: 0px;
+	border-radius: 0.25em;
+	margin-left: 5px;
+	margin-right: 5px;
+	text-align: center;
+}
+
+.node-controls-colors {
+  background-color:rgb(56, 56, 56);
+  color:rgb(167, 167, 167);
 }

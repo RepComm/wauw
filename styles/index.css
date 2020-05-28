@@ -52,6 +52,7 @@ body {
   height: 98%;
   background-color: #1c1c1c;
   border-radius: 1em;
+  overflow-y:auto;
 }
 
 .config-knob {

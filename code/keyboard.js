@@ -1,8 +1,10 @@
 
 import { Node } from "./node.js";
 import { lerp, pointInRect, roundRect } from "./math.js";
+import { make, on } from "./aliases.js";
 
 let twelthRootTwo = 1.059463094359;
+let A3 = 220;
 let A4 = 440;
 
 let scale = {
@@ -53,6 +55,24 @@ export class KeyboardDisplay extends Node {
     this.headerHeight = 0.5;
     this.sidePadding = 0.1;
     this.bottomPadding = 0.1;
+
+    this.baseFrequency = A3;
+    
+    let label = make("label");
+    label.textContent = "Base Frequency";
+    this.elementControls.appendChild(label);
+
+    let baseFreqInput = make("input");
+    baseFreqInput.classList.add("node-config-number", "node-controls-colors");
+    baseFreqInput.type = "number";
+    baseFreqInput.name = "Base Frequency";
+    baseFreqInput.min = 0;
+    baseFreqInput.max = 440*24;
+    baseFreqInput.value = this.baseFrequency;
+    on(baseFreqInput, "change", (evt) => {
+      this.baseFrequency = parseFloat(baseFreqInput.value);
+    });
+    this.elementControls.appendChild(baseFreqInput);
   }
 
   /**@param {CanvasRenderingContext2D} drawCtx 
@@ -218,7 +238,7 @@ export class KeyboardDisplay extends Node {
     if (evt.type === "mouse-down") {
       let note = this.getNoteForPosition(evt.x, evt.y);
       
-      let freq = stepsToFreq(note);
+      let freq = stepsToFreq(note, this.baseFrequency);
 
       for (let out of this.outputNodes) {
         if (out.node) {

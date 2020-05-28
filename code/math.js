@@ -61,7 +61,12 @@ let dist = (x1, y1, x2, y2) => Math.sqrt(
 
 let ndist = (n1, n2) => Math.abs(Math.abs(n1) - Math.abs(n2));
 
-let isAnyOf = (e, list) => {list.includes(e);}
+let isAnyOf = (e, list) => {
+  for (let item of list) {
+    if (item == e) return true;
+  }
+  return false;
+}
 
 let pointInRect = (x, y, rx, ry, rw, rh) => (
   x > rx &&
