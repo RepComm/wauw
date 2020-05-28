@@ -64,7 +64,7 @@ export class KeyboardDisplay extends Node {
       .max(440*4)
       .maxRotation(4)
       .onChange((evt)=>{
-        this.node.baseFrequency = evt.detail.value;
+        this.baseFrequency = evt.detail.value;
       })
       .styleClasses("node-config-knob")
       .knobStyle("./textures/knob01.svg", "node-config-knob-control")
