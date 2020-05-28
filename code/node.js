@@ -1,5 +1,5 @@
 
-import { make, on } from "./aliases.js";
+import { make, on, setProps } from "./aliases.js";
 
 import { Utils, roundRect } from "./math.js";
 
@@ -150,6 +150,58 @@ class Node {
           this.node.frequency.value = parseFloat(freqSlider.value);
         });
         this.elementControls.appendChild(freqSlider);
+
+        let waveSelect = make("select");
+        waveSelect.classList.add("node-config-select");
+        setProps(waveSelect, {
+          name:"wave type",
+          value:"sine"
+        });
+        let waveSelectSine = make("option");
+        setProps(waveSelectSine, {
+          value:"sine",
+          textContent:"sine"
+        });
+        waveSelect.appendChild(waveSelectSine);
+
+        let waveSelectSquare = make("option");
+        setProps(waveSelectSquare, {
+          value:"square",
+          textContent:"square"
+        });
+        waveSelect.appendChild(waveSelectSquare);
+
+        let waveSelectSaw = make("option");
+        setProps(waveSelectSaw, {
+          value:"sawtooth",
+          textContent:"sawtooth"
+        });
+        waveSelect.appendChild(waveSelectSaw);
+
+        let waveSelectTri = make("option");
+        setProps(waveSelectTri, {
+          value:"triangle",
+          textContent:"triangle"
+        });
+        waveSelect.appendChild(waveSelectTri);
+
+        on(waveSelect, "change", (evt)=>{
+          this.node.type = waveSelect.value;
+        });
+        this.elementControls.appendChild(waveSelect);
+
+        let detuneSlider = make("input");
+        detuneSlider.classList.add("node-config-number", "node-controls-colors");
+        detuneSlider.type = "number";
+        detuneSlider.name = "Amount";
+        detuneSlider.min = -100;
+        detuneSlider.max = 100;
+        detuneSlider.value = this.node.detune.value;
+        detuneSlider.step = 0.05;
+        on(detuneSlider, "change", (evt) => {
+          this.node.detune.value = parseFloat(detuneSlider.value);
+        });
+        this.elementControls.appendChild(detuneSlider);
         break;
       case "panner":
         this.node = audioCtx.createPanner();

@@ -44,3 +44,8 @@
   appearance: none;
   border-radius: 50%;
 }
+
+.node-config-select {
+  -webkit-appearance: none;
+  appearance: none;
+}

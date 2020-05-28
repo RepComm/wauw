@@ -51,6 +51,8 @@ export class KeyboardDisplay extends Node {
     this.blackNoteHeight = 0.75;
 
     this.headerHeight = 0.5;
+    this.sidePadding = 0.1;
+    this.bottomPadding = 0.1;
   }
 
   /**@param {CanvasRenderingContext2D} drawCtx 
@@ -58,16 +60,34 @@ export class KeyboardDisplay extends Node {
   render () {
     this.drawCtx.save();
 
+    this.drawCtx.save();
+    this.drawCtx.strokeStyle = "white";
+    this.drawCtx.lineWidth *= 4;
+    this.drawCtx.beginPath();
+    for (let out of this.outputNodes) {
+      this.drawCtx.moveTo(this.x + this.w/2, this.y - this.headerHeight);
+      this.drawCtx.lineTo(out.x, out.y + out.h/2);
+      this.drawCtx.closePath();
+      this.drawCtx.stroke();
+    }
+    this.drawCtx.closePath();
+    this.drawCtx.restore();
+
+    this.drawCtx.save();
     this.drawCtx.fillStyle = this.color;
     roundRect(
       this.drawCtx,
-      this.x,
+      this.x - this.sidePadding,
       this.y - this.headerHeight,
-      this.w,
-      this.h + this.headerHeight,
+      this.w + this.sidePadding*2,
+      this.h + this.headerHeight + this.bottomPadding,
       0.1
     );
     this.drawCtx.fill();
+    this.drawCtx.lineWidth *= 2;
+    this.drawCtx.strokeStyle = this.inputColor;
+    this.drawCtx.stroke();
+    this.drawCtx.restore();
 
     let nx = this.x;
     let ny = this.y;
@@ -84,15 +104,9 @@ export class KeyboardDisplay extends Node {
     //Render white notes
     for (let i=0; i<this.range; i++) {
       note = i % 12;
-      // while (note > 11) {
-      //   note -= 11;
-      // }
-
       nw = noteWidth;
 
-      if (blackNotes.includes(note)) {
-        
-      } else {
+      if (!blackNotes.includes(note)) {
         nh = this.h;
         this.drawCtx.fillStyle = whiteNoteColor;
 
@@ -107,9 +121,7 @@ export class KeyboardDisplay extends Node {
     nx = this.x;
 
     for (let i=0; i<this.range; i++) {
-
       note = i % 12;
-
       nw = noteWidth;
 
       if (blackNotes.includes(note)) {
@@ -184,9 +196,9 @@ export class KeyboardDisplay extends Node {
     return pointInRect(
       x,
       y,
-      this.x,
+      this.x - this.sidePadding,
       this.y - this.headerHeight,
-      this.w,
+      this.w + this.sidePadding,
       this.headerHeight
     );
   }
@@ -211,14 +223,11 @@ export class KeyboardDisplay extends Node {
       for (let out of this.outputNodes) {
         if (out.node) {
           if (out.node instanceof GainNode) {
-            out.node.gain.value = 0.5;
+            out.node.gain.value = 0.4;
           } else if (out.node instanceof OscillatorNode) {
             out.node.frequency.value = freq;
           }
         }
-      }
-      if (this.osc) {
-        this.osc.frequency.value = freq;
       }
     } else if (evt.type === "mouse-up") {
       for (let out of this.outputNodes) {

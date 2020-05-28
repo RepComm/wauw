@@ -23,4 +23,14 @@ let clearChildren = (e)=>{
   }
 }
 
-export { get, getByClass, rect, make, on, clearChildren };
+/**Applies the props object key:values to o
+ * @param {any} o 
+ * @param {any} props 
+ */
+let setProps = (o, props)=>{
+  for (let key in props) {
+    o[key] = props[key];
+  }
+}
+
+export { get, getByClass, rect, make, on, clearChildren, setProps };
