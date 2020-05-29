@@ -250,8 +250,8 @@ class Node {
 
         let bGainCtrl0 = new Knob()
           .label("Gain (dB)", "node-config-knob-label")
-          .min(-40)
-          .max(40)
+          .min(0)
+          .max(1)
           .maxRotation(0.75)
           .onChange((evt)=>{
             this.node.gain.value = evt.detail.value;
