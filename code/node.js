@@ -83,9 +83,9 @@ class Node {
         
         let detuneCtrl = new Knob()
           .label("Detune (cents)", "node-config-knob-label")
-          .min(440*-4)
-          .max(440*4)
-          .maxRotation(2)
+          .min(-440)
+          .max(440)
+          .maxRotation(0.5)
           .onChange((evt)=>{
             this.node.detune.value = evt.detail.value;
           })
@@ -110,7 +110,7 @@ class Node {
           .label("Gain (dB)", "node-config-knob-label")
           .min(-40)
           .max(40)
-          .maxRotation(1)
+          .maxRotation(0.75)
           .onChange((evt)=>{
             this.node.gain.value = evt.detail.value;
           })
@@ -253,7 +253,7 @@ class Node {
           .label("Gain (dB)", "node-config-knob-label")
           .min(-40)
           .max(40)
-          .maxRotation(1)
+          .maxRotation(0.75)
           .onChange((evt)=>{
             this.node.gain.value = evt.detail.value;
           })
