@@ -134,7 +134,8 @@ export class Knob {
       }
     });
 
-    on(this._element, "mousedown", (evt) => {
+    on(this._knobElement, "mousedown", (evt)=>{
+    //on(this._element, "mousedown", (evt) => {
       this._element.dataset.active = "true";
     });
   }

@@ -73,7 +73,6 @@ class Node {
           .max(this.node.frequency.maxValue / 8)
           .maxRotation(4)
           .onChange((evt)=>{
-            console.log(evt.detail.value);
             this.node.frequency.value = evt.detail.value;
           })
           .styleClasses("node-config-knob")
