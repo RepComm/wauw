@@ -421,8 +421,10 @@ class Node {
     if (this.isConnected(to)) {
       return false;
     }
-    this.node.connect(to.node);
-    this.outputNodes.push(to);
+    if (to.node && to.node instanceof AudioNode && to.node !== this.node) {
+      this.node.connect(to.node);
+      this.outputNodes.push(to);
+    }
     return true;
   }
 

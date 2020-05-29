@@ -106,4 +106,15 @@ function roundRect(ctx, x, y, width, height, radius) {
   ctx.closePath();
 }
 
-export { Utils, dist, lerp, degrees, radians, pi, ndist, isAnyOf, pointInRect, roundRect };
+/**Clamp a number between a min and max
+ * @param {number} n to clamp
+ * @param {number} min value
+ * @param {number} max value
+ */
+let clamp = (n, min=0, max=1)=> {
+  if (n < min) return min;
+  if (n > max) return max;
+  return n;
+}
+
+export { Utils, dist, lerp, degrees, radians, pi, ndist, isAnyOf, pointInRect, roundRect, clamp };

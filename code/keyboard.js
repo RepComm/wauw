@@ -184,8 +184,6 @@ export class KeyboardDisplay extends Node {
       } else if (blackNotes.includes(localnote)) {
         //Test for intersection of right half of black note
         if (x > nx && x < nx + halfNoteWidth && localy < this.blackNoteHeight) {
-
-          console.log("Black", note);
           return note;
         }
         note++;
@@ -194,7 +192,6 @@ export class KeyboardDisplay extends Node {
 
       // Test intersection of white note
       if (x > nx && x < nx + noteWidth) {
-        console.log("White", note);
         return note;
       }
       nx += noteWidth;
@@ -273,8 +270,13 @@ export class KeyboardDisplay extends Node {
     if (this.isConnected(to)) {
       return false;
     }
+    if (to !== this && to.node) {
+      if (to.node instanceof GainNode || to.node instanceof OscillatorNode) {
+        this.outputNodes.push(to);
+      }
+    }
     //this.node.connect(to.node);
-    this.outputNodes.push(to);
+    //this.outputNodes.push(to);
     return true;
   }
 

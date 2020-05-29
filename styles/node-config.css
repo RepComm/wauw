@@ -83,7 +83,9 @@
 
 .node-config-knob-control {
   height:4em;
+  width:4em;
   cursor:pointer;
+  margin-left:calc(50% - 2em);
 }
 
 .node-config-knob-label {

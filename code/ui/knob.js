@@ -1,5 +1,6 @@
 
 import { make, on, applyStyleClasses } from "../aliases.js";
+import { clamp } from "../math.js";
 
 export class Knob {
   /**A knob for a deck
@@ -19,6 +20,8 @@ export class Knob {
     this.initEvents();
     this.value(0);
     this.maxRotation();
+    this.min(-Infinity);
+    this.max(Infinity);
   }
 
   /**Appends this knob to parent
@@ -80,6 +83,9 @@ export class Knob {
     return this;
   }
 
+  getMin () {
+    return parseFloat(this._element.dataset.min);
+  }
   /**Set the maximum value
    * @param {number} value 
    */
@@ -109,7 +115,12 @@ export class Knob {
         evt.preventDefault();
 
         let nv = parseFloat(this._element.dataset.value) - evt.movementX - evt.movementY;
-        let turns = (nv / this.getMax());
+        nv = clamp(nv, this.getMin(), this.getMax());
+        let turns = (
+          nv / (
+            Math.abs(this.getMin()) + Math.abs(this.getMax())
+          )
+        ) * this.getMaxRotation();
         this._knobElement.style.transform = [`rotate(${turns}turn)`];
         this.value(nv);
 
