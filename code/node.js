@@ -188,17 +188,17 @@ class Node {
           if (isAnyOf(filterCtrl.value, [
             "lowpass", "highpass", "bandpass"
           ])) {
-            bGainCtrl.style.display = "none";
+            bGainCtrl.hide();
           } else {
-            bGainCtrl.style.display = "unset";
+            bGainCtrl.show();
           }
 
           if (isAnyOf(filterCtrl.value, [
             "lowshelf", "highshelf"
           ])) {
-            qCtrl.style.display = "none";
+            qCtrl.hide();
           } else {
-            qCtrl.style.display = "unset";
+            qCtrl.show();
           }
           this.node.type = filterCtrl.value;
         });

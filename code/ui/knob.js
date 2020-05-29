@@ -103,6 +103,14 @@ export class Knob {
     return this;
   }
 
+  show () {
+    this._element.style.display = "unset";
+  }
+
+  hide () {
+    this._element.style.display = "none";
+  }
+
   initEvents() {
     on(window, "mouseup", (evt) => {
       if (this._element.dataset.active === "true") {
