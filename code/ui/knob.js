@@ -122,12 +122,14 @@ export class Knob {
       if (this._element.dataset.active === "true") {
         evt.preventDefault();
 
-        let nv = parseFloat(this._element.dataset.value) - evt.movementX - evt.movementY;
+        let vdist = Math.abs(this.getMin()) + Math.abs(this.getMax());
+
+        let movement = (evt.movementX + evt.movementY) * Knob.sensitivity;
+        movement /= 1/vdist;
+        let nv = (parseFloat(this._element.dataset.value) - movement);
         nv = clamp(nv, this.getMin(), this.getMax());
         let turns = (
-          nv / (
-            Math.abs(this.getMin()) + Math.abs(this.getMax())
-          )
+          nv / vdist
         ) * this.getMaxRotation();
         this._knobElement.style.transform = [`rotate(${turns}turn)`];
         this.value(nv);
@@ -157,3 +159,4 @@ export class Knob {
     return this;
   }
 }
+Knob.sensitivity = 0.0025;

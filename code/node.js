@@ -71,7 +71,7 @@ class Node {
           .label("Frequency", "node-config-knob-label")
           .min(0)
           .max(this.node.frequency.maxValue / 8)
-          .maxRotation(4)
+          .maxRotation(2)
           .onChange((evt)=>{
             this.node.frequency.value = evt.detail.value;
           })
@@ -252,7 +252,7 @@ class Node {
           .label("Gain (dB)", "node-config-knob-label")
           .min(0)
           .max(1)
-          .maxRotation(0.75)
+          .maxRotation(0.5)
           .onChange((evt)=>{
             this.node.gain.value = evt.detail.value;
           })
@@ -296,7 +296,7 @@ class Node {
           .label("Frequency", "node-config-knob-label")
           .min(0)
           .max(this.node.frequency.maxValue / 8)
-          .maxRotation(4)
+          .maxRotation(2)
           .onChange((evt)=>{
             console.log(evt.detail.value);
             this.node.frequency.value = evt.detail.value;
